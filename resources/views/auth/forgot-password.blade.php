@@ -22,7 +22,7 @@
 
     {{-- Header --}}
     <header>
-        <x-public-header />
+        <x-public.public-header />
     </header>
 
     {{-- Main --}}
@@ -80,7 +80,7 @@
 
     {{-- Footer --}}
     <footer>
-        <x-public-footer />
+        <x-public.public-footer />
     </footer>
 
 </body>

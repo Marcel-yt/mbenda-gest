@@ -28,54 +28,54 @@
 
     {{-- Header (public, non-authenticated) --}}
     <header>
-        <x-public-header />
+        <x-public.public-header />
     </header>
 
     <main class="flex-1">
         {{-- 01 - Hero --}}
         <section id="hero" class="py-12">
-            <x-accueil.hero />
+            <x-public.accueil.hero />
         </section>
 
         {{-- 02 - Les chiffres --}}
         <section id="les-chiffres" class="py-12 bg-gray-50">
-            <x-accueil.chiffres />
+            <x-public.accueil.chiffres />
         </section>
 
         {{-- 03 - Pourquoi nous choisir --}}
         <section id="pourquoi-nous-choisir" class="py-12">
-            <x-accueil.pourquoi-choisir />
+            <x-public.accueil.pourquoi-choisir />
         </section>
 
         {{-- 04 - Comment ça marche --}}
         <section id="comment-ca-marche" class="py-12 bg-gray-50">
-            <x-accueil.comment-ca-marche />
+            <x-public.accueil.comment-ca-marche />
         </section>
 
         {{-- 05 - Plus-value et exemple --}}
         <section id="plus-value-exemple" class="py-12">
-            <x-accueil.plus-value-exemple />
+            <x-public.accueil.plus-value-exemple />
         </section>
 
         {{-- 06 - Témoignages --}}
         <section id="temoignages" class="py-12 bg-gray-50">
-            <x-accueil.temoignages />
+            <x-public.accueil.temoignages />
         </section>
 
         {{-- 07 - Pour épargner avec nous --}}
         <section id="epargner-avec-nous" class="py-12">
-            <x-accueil.epargner-avec-nous />
+            <x-public.accueil.epargner-avec-nous />
         </section>
 
         {{-- 08 - Call to Action --}}
         <section id="call-to-action" class="py-12 bg-gray-50">
-            <x-accueil.cta />
+            <x-public.accueil.cta />
         </section>
     </main>
 
     {{-- Footer --}}
     <footer>
-        <x-public-footer />
+        <x-public.public-footer />
     </footer>
 
 </body>

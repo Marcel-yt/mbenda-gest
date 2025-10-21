@@ -18,37 +18,37 @@
 </head>
 <body class="antialiased bg-white text-gray-900 min-h-screen flex flex-col">
     <header>
-        <x-public-header />
+        <x-public.public-header />
     </header>
 
     <main class="flex-1">
         <section id="hero" class="py-12">
-            <x-about.hero />
+            <x-public.about.hero />
         </section>
 
         <section id="mission-vision" class="py-12 bg-gray-50">
-            <x-about.mission-vision />
+            <x-public.about.mission-vision />
         </section>
 
         <section id="nos-valeurs" class="py-12">
-            <x-about.nos-valeurs />
+            <x-public.about.nos-valeurs />
         </section>
 
         <section id="notre-parcours" class="py-12 bg-gray-50">
-            <x-about.notre-parcours />
+            <x-public.about.notre-parcours />
         </section>
 
         <section id="impact-chiffres" class="py-12">
-            <x-about.impact-chiffres />
+            <x-public.about.impact-chiffres />
         </section>
 
         <section id="cta" class="py-12 bg-gray-50">
-            <x-about.cta />
+            <x-public.about.cta />
         </section>
     </main>
 
     <footer>
-        <x-public-footer />
+        <x-public.public-footer />
     </footer>
 </body>
 </html>

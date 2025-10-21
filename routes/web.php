@@ -17,9 +17,10 @@ Route::middleware(['auth', 'permission:manage settings'])->group(function () {
     // Route::get('/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
 });
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Public pages (harmonisés avec resources/views/pages/public/*.blade.php)
+Route::view('/', 'pages.public.welcome')->name('home');
+Route::view('/about', 'pages.public.about')->name('about');
+Route::view('/contact', 'pages.public.contact')->name('contact');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -30,12 +31,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
-Route::view('/about', 'about')->name('about');
-
-Route::get('/contact', function () {
-    return view('contact');
-})->name('contact');
 
 // Charger les routes d'auth (Breeze) si présentes
 if (file_exists(__DIR__ . '/auth.php')) {

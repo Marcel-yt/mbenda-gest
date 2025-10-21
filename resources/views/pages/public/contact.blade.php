@@ -18,33 +18,33 @@
 <body class="antialiased bg-white text-gray-900">
 
     <header>
-        <x-public-header />
+        <x-public.public-header />
     </header>
 
     <main class="min-h-screen">
         {{-- 01 - Hero --}}
         <section id="contact-hero">
-            <x-contact.hero />
+            <x-public.contact.hero />
         </section>
 
         {{-- 02 - Coordonnées et formulaire --}}
         <section id="coordonnees-formulaire" class="py-8 bg-gray-50">
-            <x-contact.panel />
+            <x-public.contact.panel />
         </section>
 
         {{-- 03 - Où nous trouver --}}
         <section id="ou-nous-trouver" class="py-8">
-            <x-contact.map-section />
+            <x-public.contact.map-section />
         </section>
 
         {{-- 04 - Assistance immédiate --}}
         <section id="assistance-immediate" class="py-8 bg-gray-50">
-            <x-contact.assistance />
+            <x-public.contact.assistance />
         </section>
     </main>
 
     <footer>
-        <x-public-footer />
+        <x-public.public-footer />
     </footer>
 
 </body>
