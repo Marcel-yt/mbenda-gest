@@ -22,27 +22,27 @@
     </header>
 
     <main class="flex-1">
-        <section id="hero" class="py-12">
+        <section id="hero">
             <x-public.about.hero />
         </section>
 
-        <section id="mission-vision" class="py-12 bg-gray-50">
+        <section id="mission-vision">
             <x-public.about.mission-vision />
         </section>
 
-        <section id="nos-valeurs" class="py-12">
+        <section id="nos-valeurs">
             <x-public.about.nos-valeurs />
         </section>
 
-        <section id="notre-parcours" class="py-12 bg-gray-50">
+        <section id="notre-parcours">
             <x-public.about.notre-parcours />
         </section>
 
-        <section id="impact-chiffres" class="py-12">
+        <section id="impact-chiffres">
             <x-public.about.impact-chiffres />
         </section>
 
-        <section id="cta" class="py-12 bg-gray-50">
+        <section id="cta" bg-gray-50">
             <x-public.about.cta />
         </section>
     </main>

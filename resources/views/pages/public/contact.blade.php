@@ -28,17 +28,17 @@
         </section>
 
         {{-- 02 - Coordonnées et formulaire --}}
-        <section id="coordonnees-formulaire" class="py-8 bg-gray-50">
+        <section id="coordonnees-formulaire">
             <x-public.contact.panel />
         </section>
 
         {{-- 03 - Où nous trouver --}}
-        <section id="ou-nous-trouver" class="py-8">
+        <section id="ou-nous-trouver">
             <x-public.contact.map-section />
         </section>
 
         {{-- 04 - Assistance immédiate --}}
-        <section id="assistance-immediate" class="py-8 bg-gray-50">
+        <section id="assistance-immediate">
             <x-public.contact.assistance />
         </section>
     </main>

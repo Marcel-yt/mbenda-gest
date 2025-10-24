@@ -1,6 +1,6 @@
 <section class="py-16 bg-[#f0f7fb]">
     <div class="max-w-7xl mx-auto px-6 text-center">
-        <h3 class="text-2xl font-semibold text-[var(--mb-primary)]">Où nous trouver ?</h3>
+        <h2 id="addresse" class="text-3xl md:text-4xl font-extrabold text-[var(--mb-primary)]">Où nous trouver ? </h2>
         <p class="mt-3 text-gray-600 max-w-5xl mx-auto">Notre équipe Mbenda Gest est basée à Moanda, au Gabon, au cœur de la communauté que nous accompagnons chaque jour.
 Passez nous voir, ou contactez-nous en ligne pour découvrir comment nous pouvons vous aider à gérer et automatiser vos tontines en toute confiance.</p>
 

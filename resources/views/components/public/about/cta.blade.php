@@ -1,9 +1,17 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-  <div class="p-6 bg-white border rounded">
-    <h3 class="text-xl font-semibold">Envie d'en savoir plus ?</h3>
-    <p class="mt-2 text-gray-600">Contactez-nous ou demandez une démo.</p>
-    <div class="mt-4">
-      <a href="{{ url('/contact') }}" class="px-5 py-2 rounded text-white" style="background: var(--mb-primary)">Contact</a>
+<section aria-labelledby="about-cta" class="py-16 bg-gray-50">
+  <div class="max-w-3xl mx-auto px-4 text-center">
+    <h2 id="valeurs" class="text-3xl md:text-4xl font-extrabold">
+        <span class="text-[var(--mb-secondary)]">Faites partie de</span>
+        <span class="text-[var(--mb-primary)]"> notre histoire</span>
+      </h2>
+    <p class="mt-4 text-gray-600 text-lg md:text-xl">
+      Rejoignez des milliers de personnes qui ont choisi Mbenda Gest pour construire un avenir financier plus serein.
+    </p>
+
+    <div class="mt-8">
+      <a href="{{ route('contact') }}" class="inline-block px-6 py-3 rounded-full bg-[var(--mb-primary)] text-white font-medium shadow-md hover:shadow-lg transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--mb-primary)]" aria-label="Contacter Mbenda Gest">
+        Commencer mon épargne
+      </a>
     </div>
   </div>
-</div>
+</section>

@@ -33,42 +33,42 @@
 
     <main class="flex-1">
         {{-- 01 - Hero --}}
-        <section id="hero" class="py-12">
+        <section id="hero">
             <x-public.accueil.hero />
         </section>
 
         {{-- 02 - Les chiffres --}}
-        <section id="les-chiffres" class="py-12 bg-gray-50">
+        <section id="les-chiffres">
             <x-public.accueil.chiffres />
         </section>
 
         {{-- 03 - Pourquoi nous choisir --}}
-        <section id="pourquoi-nous-choisir" class="py-12">
+        <section id="pourquoi-nous-choisir">
             <x-public.accueil.pourquoi-choisir />
         </section>
 
         {{-- 04 - Comment ça marche --}}
-        <section id="comment-ca-marche" class="py-12 bg-gray-50">
+        <section id="comment-ca-marche">
             <x-public.accueil.comment-ca-marche />
         </section>
 
         {{-- 05 - Plus-value et exemple --}}
-        <section id="plus-value-exemple" class="py-12">
+        <section id="plus-value-exemple">
             <x-public.accueil.plus-value-exemple />
         </section>
 
         {{-- 06 - Témoignages --}}
-        <section id="temoignages" class="py-12 bg-gray-50">
+        <section id="temoignages">
             <x-public.accueil.temoignages />
         </section>
 
         {{-- 07 - Pour épargner avec nous --}}
-        <section id="epargner-avec-nous" class="py-12">
+        <section id="epargner-avec-nous">
             <x-public.accueil.epargner-avec-nous />
         </section>
 
         {{-- 08 - Call to Action --}}
-        <section id="call-to-action" class="py-12 bg-gray-50">
+        <section id="call-to-action">
             <x-public.accueil.cta />
         </section>
     </main>

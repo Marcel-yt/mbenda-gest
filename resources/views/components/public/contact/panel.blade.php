@@ -65,16 +65,16 @@
 
                 <form class="mt-6 grid grid-cols-1 gap-4">
                     <div class="grid sm:grid-cols-2 gap-4">
-                        <input type="text" readonly placeholder="Prénom" class="w-full p-3 border rounded bg-gray-50 text-gray-600" />
-                        <input type="text" readonly placeholder="Nom" class="w-full p-3 border rounded bg-gray-50 text-gray-600" />
+                        <input type="text" readonly placeholder="Prénom" class="w-full p-3 border-[#D7D7D7] rounded-lg bg-gray-50 text-gray-600" />
+                        <input type="text" readonly placeholder="Nom" class="w-full p-3 border-[#D7D7D7] rounded-lg bg-gray-50 text-gray-600" />
                     </div>
 
                     <div class="grid sm:grid-cols-2 gap-4">
-                        <input type="email" readonly placeholder="Email" class="w-full p-3 border rounded bg-gray-50 text-gray-600" />
-                        <input type="text" readonly placeholder="Téléphone" class="w-full p-3 border rounded bg-gray-50 text-gray-600" />
+                        <input type="email" readonly placeholder="Email" class="w-full p-3 border-[#D7D7D7] rounded-lg bg-gray-50 text-gray-600" />
+                        <input type="text" readonly placeholder="Téléphone" class="w-full p-3 border-[#D7D7D7] rounded-lg bg-gray-50 text-gray-600" />
                     </div>
 
-                    <textarea rows="6" readonly placeholder="Votre message" class="w-full p-3 border rounded bg-gray-50 text-gray-600"></textarea>
+                    <textarea rows="6" readonly placeholder="Votre message" class="w-full p-3 border-[#D7D7D7] rounded-lg bg-gray-50 text-gray-600"></textarea>
 
                     <div class="flex items-center justify-between">
                         <span class="text-sm text-gray-500">Formulaire désactivé</span>
