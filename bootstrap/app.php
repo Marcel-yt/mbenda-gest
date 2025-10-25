@@ -11,7 +11,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'role' => \App\Http\Middleware\EnsureUserHasRole::class,
+        ]);
+
+        // (optionnel) groupes si besoin
+        // $middleware->group('admin', ['auth', 'verified', 'role:admin']);
+        // $middleware->group('agent', ['auth', 'verified', 'role:agent']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

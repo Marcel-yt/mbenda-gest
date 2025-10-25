@@ -1,29 +1,22 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+@extends(auth()->user()?->role === 'admin' ? 'layouts.app-admin' : 'layouts.app-agent')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
+@section('title', 'Profil')
+@section('page_title', 'Profil')
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
+@section('content')
+  <div class="max-w-7xl mx-auto space-y-8">
+    <header>
+      <h1 class="text-2xl md:text-3xl font-semibold tracking-tight">Paramètres du profil</h1>
+      <p class="mt-1 text-sm text-gray-600">Gérez vos informations personnelles et la sécurité de votre compte.</p>
+    </header>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
-            </div>
-        </div>
-    </div>
-</x-app-layout>
+    {{-- Infos profil --}}
+    @include('profile.partials.update-profile-information-form', ['user' => $user])
+
+    {{-- Mot de passe --}}
+    @include('profile.partials.update-password-form')
+
+    {{-- Suppression du compte --}}
+    @include('profile.partials.delete-user-form')
+  </div>
+@endsection

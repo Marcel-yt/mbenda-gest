@@ -5,7 +5,7 @@
       <div>
         <a href="{{ route('home') }}" class="inline-flex items-center gap-2 mb-4 ">
           {{-- logo small --}}
-          <img src="{{ asset('images/logo.png') }}" alt="Mbenda Gest" class="w-36 h-auto object-contain bg-[#FFFFFF] p-3 rounded-lg" onerror="this.style.display='none'"/>
+          <img src="{{ asset('images/logo2.png') }}" alt="Mbenda Gest" class="w-36 h-auto object-contain" onerror="this.style.display='none'"/>
           <span class="sr-only">Mbenda Gest</span>
         </a>
 

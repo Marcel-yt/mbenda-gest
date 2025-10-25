@@ -25,7 +25,7 @@
     </header>
 
     {{-- Main --}}
-    <main class="flex-1 flex items-center justify-center py-16 px-4">
+    <main class="flex-1 flex items-center justify-center py-16 px-4 mt-12">
         <div class="w-full max-w-5xl">
             <div class="bg-white rounded-2xl shadow-lg overflow-hidden grid grid-cols-1 md:grid-cols-2">
                 <!-- LEFT: form -->
