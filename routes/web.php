@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\UserController;
 
 // Page d’accueil publique
 Route::view('/', 'pages.public.welcome')->name('home');
@@ -28,7 +29,11 @@ Route::middleware(['auth','verified','role:admin'])
     ->prefix('admin')->name('admin.')
     ->group(function () {
         Route::view('/', 'pages.app.admin.dashboard')->name('dashboard');
-        // autres routes admin…
+
+        // Resource routes pour users (index, create, store, show, edit, update, destroy)
+        Route::resource('users', UserController::class)->names('users');
+
+        // Autres routes admin...
     });
 
 // Agent
@@ -36,7 +41,7 @@ Route::middleware(['auth','verified','role:agent'])
     ->prefix('agent')->name('agent.')
     ->group(function () {
         Route::view('/', 'pages.app.agent.dashboard')->name('dashboard');
-        // autres routes agent…
+        // Autres routes agent...
     });
 
 // Auth Breeze (si présent)
