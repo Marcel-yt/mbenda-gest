@@ -4,11 +4,12 @@
     <p class="mt-1 text-sm text-gray-600">Mettez à jour vos informations personnelles et votre adresse e‑mail.</p>
   </header>
 
-  <form id="send-verification" method="post" action="{{ route('verification.send') }}">
-    @csrf
-  </form>
+  @php
+    $currentUserRole = auth()->user()?->role;
+  @endphp
 
-  <form method="post" action="{{ route('profile.update') }}" class="space-y-6">
+  {{-- formulaire d'édition (admins uniquement) --}}
+  <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-6">
     @csrf
     @method('patch')
 
@@ -40,24 +41,59 @@
       <x-text-input id="email" name="email" type="email" class="mt-1 block w-full"
                     :value="old('email', $user->email)" required autocomplete="username" />
       <x-input-error class="mt-2" :messages="$errors->get('email')" />
+    </div>
 
-      @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-        <div class="mt-3">
-          <p class="text-sm text-gray-800">
-            Votre adresse e‑mail n’est pas vérifiée.
-            <button form="send-verification"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              Cliquez ici pour renvoyer l’e‑mail de vérification.
-            </button>
-          </p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <x-input-label :value="__('Rôle')" />
+        <div class="mt-1 text-gray-700">{{ ucfirst($user->role ?? '—') }}</div>
+      </div>
 
-          @if (session('status') === 'verification-link-sent')
-            <p class="mt-2 font-medium text-sm text-green-600">
-              Un nouveau lien de vérification a été envoyé à votre adresse e‑mail.
-            </p>
-          @endif
+      <div>
+        <x-input-label for="color_hex" :value="__('Couleur')" />
+        <div class="mt-1 flex items-center gap-3">
+          <x-text-input id="color_hex" name="color_hex" type="text" class="block w-32"
+                        :value="old('color_hex', $user->color_hex)" placeholder="#RRGGBB" />
+          <input id="color_picker" type="color" class="w-10 h-10 p-0 border rounded" value="{{ old('color_hex', $user->color_hex ?? '#E5E7EB') }}"
+                 onchange="document.getElementById('color_hex').value = this.value">
         </div>
-      @endif
+        <x-input-error class="mt-2" :messages="$errors->get('color_hex')" />
+      </div>
+
+      <div>
+        {{-- Statut : affichage seulement avec indicatif coloré (non modifiable) --}}
+        <x-input-label :value="__('Statut')" />
+        <div class="mt-2 flex items-center gap-3">
+          <span class="inline-block w-2 h-2 rounded-full" style="background: {{ $user->active ? '#16A34A' : '#DC2626' }};"></span>
+          <div class="text-gray-700 font-medium">{{ $user->active ? 'Actif' : 'Désactivé' }}</div>
+        </div>
+
+        {{-- Message si compte désactivé --}}
+        @if(!$user->active)
+          <p class="mt-2 text-sm text-red-600">Compte désactivé — cet utilisateur ne pourra plus se connecter. Contactez un administrateur pour le réactiver.</p>
+        @endif
+      </div>
+    </div>
+
+    <div>
+      <x-input-label for="photo_profil" :value="__('Photo de profil')" />
+      <div class="mt-2 flex items-center gap-4">
+        <img class="h-20 w-20 rounded-full object-cover border"
+             id="photo-preview"
+             src="{{ $user->photo_profil ? Storage::url($user->photo_profil) . '?t=' . ($user->updated_at ? $user->updated_at->timestamp : time()) : asset('images/default-avatar.png') }}"
+             alt="{{ $user->name }}">
+
+        <div class="flex-1">
+          <input id="photo_profil" name="photo_profil" type="file" accept="image/*" class="block w-full" />
+          <x-input-error class="mt-2" :messages="$errors->get('photo_profil')" />
+          <p class="text-xs text-gray-500 mt-1">Formats acceptés : jpg, png. Max recommandé 2MB.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <x-input-label :value="__('Dernière connexion')" />
+      <div class="mt-1 text-gray-700">{{ $user->last_login_at ? $user->last_login_at->format('d/m/Y H:i') : 'Jamais' }}</div>
     </div>
 
     <div class="flex items-center gap-4">
@@ -70,4 +106,20 @@
       @endif
     </div>
   </form>
+
+  <script>
+    // preview image client-side
+    (function(){
+      const input = document.getElementById('photo_profil');
+      const preview = document.getElementById('photo-preview');
+      if(!input || !preview) return;
+      input.addEventListener('change', function(e){
+        const file = this.files && this.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev){ preview.src = ev.target.result; };
+        reader.readAsDataURL(file);
+      });
+    })();
+  </script>
 </section>

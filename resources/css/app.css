@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+:root{
+  --mb-primary: #0078B7;
+  --mb-secondary: #7FBC47;
+  --mb-tertiary: #F7A52C;
+}
+
+/* boutons */
+.mb-btn-primary{background:var(--mb-primary);color:#fff;border:none}
+.mb-btn-primary:hover{filter:brightness(.95)}
+.mb-btn-secondary{background:var(--mb-secondary);color:#fff}
+.mb-btn-tertiary{background:var(--mb-tertiary);color:#fff}
+
+/* liens / bordures */
+.mb-link{border:2px solid var(--mb-primary);color:var(--mb-primary);padding:.45rem .75rem;border-radius:.375rem;display:inline-flex;align-items:center;gap:.5rem}
+.mb-link:hover{background:rgba(0,0,0,0.03)}
+
+/* badges rôle */
+.mb-badge-admin{background:var(--mb-tertiary);color:#fff}
+.mb-badge-agent{background:var(--mb-secondary);color:#fff}
+.mb-badge-client{background:#F3F4F6;color:#111}
+
+/* indicateur statut (active = secondaire ; inactive = tertiary chosen as "non-brand red") */
+.mb-ind-active{width:0.625rem;height:0.625rem;border-radius:9999px;background:var(--mb-secondary);display:inline-block}
+.mb-ind-inactive{width:0.625rem;height:0.625rem;border-radius:9999px;background:var(--mb-tertiary);display:inline-block}

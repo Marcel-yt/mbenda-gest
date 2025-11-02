@@ -27,6 +27,8 @@ class DatabaseSeeder extends Seeder
                 'role' => 'admin',
                 'color_hex' => null,
                 'active' => true,
+                'photo_profil' => null, // ajouté
+                // is_super_admin reste false par défaut
             ]
         );
         $admin->assignRole('admin');
@@ -42,8 +44,31 @@ class DatabaseSeeder extends Seeder
                 'role' => 'agent',
                 'color_hex' => '#FF5733',
                 'active' => true,
+                'photo_profil' => null, // ajouté
             ]
         );
         $agent->assignRole('agent');
+
+        // Création (ou mise à jour) du super-admin — doit figurer ici
+        $super = User::updateOrCreate(
+            ['email' => 'superadmin@mbenda.test'],
+            [
+                'first_name' => 'Super',
+                'last_name' => 'Admin',
+                'phone' => '+237600000009',
+                'password' => Hash::make('ChangeMe123!'),
+                'role' => 'admin',
+                'color_hex' => null,
+                'is_super_admin' => true,
+                'active' => true,
+                'photo_profil' => null, // ajouté
+            ]
+        );
+        $super->assignRole('admin');
+
+        // S'assurer que les autres admins n'ont pas le flag super-admin
+        User::where('role', 'admin')
+            ->where('id', '!=', $super->id)
+            ->update(['is_super_admin' => false]);
     }
 }

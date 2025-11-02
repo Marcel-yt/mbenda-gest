@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Permission\Traits\HasRoles; // ajouté
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory, Notifiable, SoftDeletes, HasRoles; // ajouté HasRoles
 
     protected $fillable = [
         'first_name',
@@ -21,6 +22,8 @@ class User extends Authenticatable
         'color_hex',
         'active',
         'last_login_at',
+        'photo_profil',
+        'is_super_admin',
     ];
 
     protected $hidden = [
@@ -33,6 +36,7 @@ class User extends Authenticatable
         'last_login_at' => 'datetime',
         'active' => 'boolean',
         'password' => 'hashed',
+        'is_super_admin' => 'boolean',
     ];
 
     // Accès pratique: {{ Auth::user()->name }}
@@ -43,4 +47,12 @@ class User extends Authenticatable
 
     public function isAdmin(): bool   { return $this->role === 'admin'; }
     public function isAgent(): bool   { return $this->role === 'agent'; }
+
+    /**
+     * L'utilisateur qui a créé cet utilisateur (optionnel).
+     */
+    public function creator()
+    {
+        return $this->belongsTo(self::class, 'created_by');
+    }
 }

@@ -29,7 +29,11 @@ return new class extends Migration
             $table->enum('role', ['admin', 'agent'])->default('agent');
             $table->string('color_hex')->nullable()->unique();
 
-            // statut et activité
+            // nouveau: photo de profil (chemin) et flag super-admin (false par défaut)
+            $table->string('photo_profil')->nullable();
+            $table->boolean('is_super_admin')->default(false);
+
+            // statut et activité (active = true, désactivé = false)
             $table->boolean('active')->default(true);
             $table->timestamp('last_login_at')->nullable();
 
@@ -51,6 +55,13 @@ return new class extends Migration
             $table->text('user_agent')->nullable();
             $table->longText('payload');
             $table->integer('last_activity')->index();
+        });
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignId('created_by')->nullable()->after('photo_profil')
+                  ->constrained('users')
+                  ->nullOnDelete();
+            $table->index('created_by');
         });
     }
 
