@@ -55,4 +55,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo(self::class, 'created_by');
     }
+
+    /**
+     * Clients créés par cet agent.
+     */
+    public function clients()
+    {
+        return $this->hasMany(\App\Models\Client::class, 'created_by_agent_id');
+    }
 }

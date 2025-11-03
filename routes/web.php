@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\Admin\ClientController as AdminClientController;
 
 // Page d’accueil publique
 Route::view('/', 'pages.public.welcome')->name('home');
@@ -49,3 +51,13 @@ Route::middleware(['auth','verified','role:agent'])
 if (file_exists(__DIR__.'/auth.php')) {
     require __DIR__.'/auth.php';
 }
+
+// Routes pour la gestion des clients (agents + admins peuvent accéder selon contrôleur)
+Route::middleware(['auth'])->group(function () {
+    Route::resource('clients', ClientController::class);
+});
+
+// Routes pour la gestion des clients (admin uniquement)
+Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('clients', AdminClientController::class)->except(['create','store']);
+});
