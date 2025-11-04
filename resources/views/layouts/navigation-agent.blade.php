@@ -8,9 +8,9 @@
   <nav class="px-0 py-4 space-y-1">
     <a href="{{ route('agent.dashboard') }}"
        class="group w-full text-sm font-medium flex items-center gap-3 px-5 py-3
-       {{ request()->routeIs('agent.*') ? 'bg-[var(--mb-secondary,#7FBC47)] text-white' : 'text-white/80 hover:bg-white/10' }} rounded-none">
+       {{ request()->routeIs('agent.dashboard') ? 'bg-[var(--mb-secondary,#7FBC47)] text-white' : 'text-white/80 hover:bg-white/10' }} rounded-none">
       <!-- icône Dashboard améliorée (trois tuiles) -->
-      <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="{{ request()->routeIs('agent.*') ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+      <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="{{ request()->routeIs('agent.dashboard') ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
         <path d="M3 13h8V3H3v10z"></path>
         <path d="M13 21h8V11h-8v10z"></path>
         <path d="M3 21h8v-6H3v6z"></path>
@@ -26,6 +26,19 @@
         <path d="M3 7h18M3 12h18M3 17h18" />
       </svg>
       <span class="leading-tight">Liste des clients</span>
+    </a>
+
+    <a href="{{ route('agent.tontines.index') }}"
+       class="group w-full text-sm font-medium flex items-center gap-3 px-5 py-3
+       {{ request()->routeIs('agent.tontines.*') ? 'bg-[var(--mb-secondary,#7FBC47)] text-white' : 'text-white/80 hover:bg-white/10' }} rounded-none">
+      <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="{{ request()->routeIs('agent.tontines.*') ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- pile de pièces / collecte -->
+        <ellipse cx="12" cy="5" rx="7" ry="2.5" />
+        <path d="M5 5v3.5C5 10 8.134 12 12 12s7-2 7-3.5V5" fill="none"/>
+        <ellipse cx="12" cy="12" rx="7" ry="2.5" />
+        <path d="M5 12v3.5C5 20 8.134 22 12 22s7-2 7-6.5V12" fill="none"/>
+      </svg>
+      <span class="leading-tight">Tontines</span>
     </a>
   </nav>
 </aside>
@@ -59,8 +72,8 @@
     <nav class="px-0 py-4 space-y-1">
       <a href="{{ route('agent.dashboard') }}"
          class="group w-full text-sm font-medium flex items-center gap-3 px-5 py-3
-         {{ request()->routeIs('agent.*') ? 'bg-[var(--mb-secondary,#7FBC47)] text-white' : 'text-white/80 hover:bg-white/10' }} rounded-none">
-        <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="{{ request()->routeIs('agent.*') ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+         {{ request()->routeIs('agent.dashboard') ? 'bg-[var(--mb-secondary,#7FBC47)] text-white' : 'text-white/80 hover:bg-white/10' }} rounded-none">
+        <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="{{ request()->routeIs('agent.dashboard') ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
           <path d="M3 13h8V3H3v10z"></path>
           <path d="M13 21h8V11h-8v10z"></path>
           <path d="M3 21h8v-6H3v6z"></path>
@@ -76,7 +89,17 @@
         </svg>
         <span class="leading-tight">Liste des clients</span>
       </a>
-      {{-- autres liens agent ici --}}
+      <a href="{{ route('agent.tontines.index') }}"
+         class="group w-full text-sm font-medium flex items-center gap-3 px-5 py-3
+         {{ request()->routeIs('agent.tontines.*') ? 'bg-[var(--mb-secondary,#7FBC47)] text-white' : 'text-white/80 hover:bg-white/10' }} rounded-none">
+        <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="{{ request()->routeIs('agent.tontines.*') ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <ellipse cx="12" cy="5" rx="7" ry="2.5" />
+          <path d="M5 5v3.5C5 10 8.134 12 12 12s7-2 7-3.5V5" fill="none"/>
+          <ellipse cx="12" cy="12" rx="7" ry="2.5" />
+          <path d="M5 12v3.5C5 20 8.134 22 12 22s7-2 7-6.5V12" fill="none"/>
+        </svg>
+        <span class="leading-tight">Tontines</span>
+      </a>
     </nav>
   </div>
 </div>
