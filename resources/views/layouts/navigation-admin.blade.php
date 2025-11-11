@@ -28,6 +28,38 @@
       <span class="leading-tight">Liste des utilisateurs</span>
     </a>
 
+    <!-- Nouveau lien : Liste des tontines -->
+    <a href="{{ route('admin.tontines.index') }}"
+       class="group w-full text-sm font-medium flex items-center gap-3 px-5 py-3
+       {{ request()->routeIs('admin.tontines.*') ? 'bg-[var(--mb-primary)] text-white' : 'text-white/80 hover:bg-white/10' }} rounded-none">
+      <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="{{ request()->routeIs('admin.tontines.*') ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse cx="12" cy="5" rx="7" ry="2.5" />
+        <path d="M5 5v3.5C5 10 8.134 12 12 12s7-2 7-3.5V5" fill="none"/>
+        <ellipse cx="12" cy="12" rx="7" ry="2.5" />
+        <path d="M5 12v3.5C5 20 8.134 22 12 22s7-2 7-6.5V12" fill="none"/>
+      </svg>
+      <span class="leading-tight">Liste des tontines</span>
+    </a>
+
+    <!-- Nouveau lien : Liste des collectes -->
+    <a href="{{ route('admin.collectes.index') }}"
+       class="group w-full text-sm font-medium flex items-center gap-3 px-5 py-3
+       {{ request()->routeIs('admin.collectes.*') ? 'bg-[var(--mb-primary)] text-white' : 'text-white/80 hover:bg-white/10' }} rounded-none">
+      <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="{{ request()->routeIs('admin.collectes.*') ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M4 7h16M4 12h16M4 17h10" />
+      </svg>
+      <span class="leading-tight">Liste des collectes</span>
+    </a>
+
+    <!-- Nouveau lien : Liste des paiements -->
+    <a href="{{ route('admin.payouts.index') }}"
+       class="group w-full text-sm font-medium flex items-center gap-3 px-5 py-3
+       {{ request()->routeIs('admin.payouts.*') ? 'bg-[var(--mb-primary)] text-white' : 'text-white/80 hover:bg-white/10' }}">
+      <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="{{ request()->routeIs('admin.payouts.*') ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 7h16M4 12h16M4 17h10" />
+      </svg>
+      <span class="leading-tight">Liste des paiements</span>
+    </a>
     {{-- autres liens admin ici --}}
   </nav>
 </aside>
@@ -78,6 +110,35 @@
         <span class="leading-tight">Liste des utilisateurs</span>
       </a>
 
+      <a href="{{ route('admin.tontines.index') }}"
+         class="group w-full text-sm font-medium flex items-center gap-3 px-5 py-3
+         {{ request()->routeIs('admin.tontines.*') ? 'bg-[var(--mb-primary)] text-white' : 'text-white/80 hover:bg-white/10' }} rounded-none">
+        <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="{{ request()->routeIs('admin.tontines.*') ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <ellipse cx="12" cy="5" rx="7" ry="2.5" />
+          <path d="M5 5v3.5C5 10 8.134 12 12 12s7-2 7-3.5V5" fill="none"/>
+          <ellipse cx="12" cy="12" rx="7" ry="2.5" />
+          <path d="M5 12v3.5C5 20 8.134 22 12 22s7-2 7-6.5V12" fill="none"/>
+        </svg>
+        <span class="leading-tight">Liste des tontines</span>
+      </a>
+
+      <a href="{{ route('admin.collectes.index') }}"
+         class="group w-full text-sm font-medium flex items-center gap-3 px-5 py-3
+         {{ request()->routeIs('admin.collectes.*') ? 'bg-[var(--mb-primary)] text-white' : 'text-white/80 hover:bg-white/10' }} rounded-none">
+        <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="{{ request()->routeIs('admin.collectes.*') ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h10" />
+        </svg>
+        <span class="leading-tight">Liste des collectes</span>
+      </a>
+
+      <a href="{{ route('admin.payouts.index') }}"
+         class="group w-full text-sm font-medium flex items-center gap-3 px-5 py-3
+         {{ request()->routeIs('admin.payouts.*') ? 'bg-[var(--mb-primary)] text-white' : 'text-white/80 hover:bg-white/10' }}">
+        <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="{{ request()->routeIs('admin.payouts.*') ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 7h16M4 12h16M4 17h10" />
+        </svg>
+        <span class="leading-tight">Liste des paiements</span>
+      </a>
       {{-- autres liens admin ici --}}
     </nav>
   </div>

@@ -5,83 +5,76 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Tontine;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Carbon;
 
 class TontineController extends Controller
 {
-    // Note: protège les routes via middleware dans routes/web.php (auth + role:admin)
-
-    public function index(): View
+    public function index()
     {
-        $tontines = Tontine::with('client','creator')->orderByDesc('created_at')->paginate(20);
+        $tontines = Tontine::with(['client'])
+            ->latest('id')
+            ->paginate(20);
+
         return view('pages.app.admin.tontines.index', compact('tontines'));
     }
 
-    public function create(): View
+    public function show(int $id)
     {
-        return view('pages.app.admin.tontines.create');
-    }
+        $tontine = Tontine::with(['client'])->findOrFail($id);
 
-    public function store(Request $request): RedirectResponse
-    {
-        $data = $request->validate([
-            'client_id' => 'required|exists:clients,id',
-            'daily_amount' => 'required|numeric|min:0',
-            'start_date' => 'required|date',
-            'duration_days' => 'nullable|integer|min:1',
-            'allow_early_payout' => 'boolean',
-            'commission_days' => 'nullable|integer|min:0',
-        ]);
-
-        $data['created_by_agent_id'] = $request->user()->id;
-        $tontine = Tontine::create($data);
-
-        return redirect()->route('admin.tontines.show', $tontine)->with('success', 'Tontine créée.');
-    }
-
-    public function show(Tontine $tontine): View
-    {
-        // load only relations that exist in the code / DB
-        $tontine->load('client','creator');
         return view('pages.app.admin.tontines.show', compact('tontine'));
     }
 
-    public function edit(Tontine $tontine): View
+    public function edit(int $id)
     {
+        $tontine = Tontine::with(['client'])->findOrFail($id);
+
         return view('pages.app.admin.tontines.edit', compact('tontine'));
     }
 
-    public function update(Request $request, Tontine $tontine): RedirectResponse
+    public function update(Request $request, int $id)
     {
+        $tontine = Tontine::findOrFail($id);
+
+        // On ne modifie que daily_amount et start_date
         $data = $request->validate([
             'daily_amount' => 'required|numeric|min:0',
-            'start_date' => 'required|date',
-            'duration_days' => 'nullable|integer|min:1',
-            'allow_early_payout' => 'boolean',
-            'commission_days' => 'nullable|integer|min:0',
+            'start_date'   => 'nullable|date',
         ]);
 
-        $tontine->update($data);
+        // maj date de début
+        $tontine->start_date = !empty($data['start_date']) ? Carbon::parse($data['start_date']) : $tontine->start_date;
+        // recalcul de la fin prévue en fonction de la durée existante
+        if ($tontine->start_date && $tontine->duration_days) {
+            $tontine->expected_end_date = $tontine->start_date->copy()->addDays(max(1, (int)$tontine->duration_days) - 1);
+        }
 
-        return back()->with('success', 'Tontine mise à jour.');
-    }
-
-    public function destroy(Tontine $tontine): RedirectResponse
-    {
-        $tontine->delete();
-        return redirect()->route('admin.tontines.index')->with('success', 'Tontine supprimée (soft).');
-    }
-
-    // simple finalize action (admin triggers payout flow)
-    public function finalize(Request $request, Tontine $tontine): RedirectResponse
-    {
-        // here you would run the payout calculation (sum collectes, apply commission_days etc.)
-        // set status completed -> paid/archived in real flow after payout processing
-        $tontine->status = 'completed';
-        $tontine->completed_at = now();
         $tontine->save();
 
-        return redirect()->route('admin.tontines.show', $tontine)->with('success', 'Tontine marquée comme clôturée (completed).');
+        return redirect()
+            ->route('admin.tontines.show', $tontine->id)
+            ->with('success', 'Tontine mise à jour.');
+    }
+
+    public function pay(Request $request, int $id)
+    {
+        $tontine = Tontine::findOrFail($id);
+
+        if (in_array($tontine->status, ['paid','cancelled','archived','draft'])) {
+            return redirect()->route('admin.tontines.show', $tontine->id)
+                ->with('error', 'Paiement non autorisé pour ce statut.');
+        }
+
+        if ($tontine->status === 'active' && !$request->boolean('force')) {
+            return redirect()->route('admin.tontines.show', $tontine->id)
+                ->with('error', 'Confirmation manquante.');
+        }
+
+        $tontine->status = 'paid';
+        $tontine->paid_at = $tontine->paid_at ?: now();
+        $tontine->save();
+
+        return redirect()->route('admin.tontines.show', $tontine->id)
+            ->with('success', 'Statut passé à paid.');
     }
 }

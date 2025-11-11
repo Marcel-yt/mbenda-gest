@@ -123,4 +123,21 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Meta entreprise
+    |--------------------------------------------------------------------------
+    |
+    | This configuration option defines the meta information about the
+    | company or enterprise that owns the application.
+    |
+    */
+
+    'meta' => [
+        'name' => env('COMPANY_NAME', 'Mbenda Gest'),
+        'email' => env('COMPANY_EMAIL', 'contact@mbenda-gest.com'),
+        'phone' => env('COMPANY_PHONE', '066083193 / 077402098'),
+        'address' => env('COMPANY_ADDRESS', 'Moanda - Gabon'),
+    ],
+
 ];

@@ -7,6 +7,9 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\Admin\ClientController as AdminClientController;
 use App\Http\Controllers\Agent\TontineController as AgentTontineController;
 use App\Http\Controllers\Admin\TontineController as AdminTontineController;
+use App\Http\Controllers\Agent\CollecteController;
+use App\Http\Controllers\Admin\CollecteController as AdminCollecteController;
+use App\Http\Controllers\Admin\PayoutController as AdminPayoutController;
 
 // Page d’accueil publique
 Route::view('/', 'pages.public.welcome')->name('home');
@@ -60,6 +63,11 @@ Route::middleware(['auth','verified','role:agent'])
         Route::get('tontines/clients/search', [AgentTontineController::class, 'searchClients'])
             ->name('tontines.clients.search');
 
+        // Routes pour les collectes (index, create, store, show)
+        Route::resource('collectes', CollecteController::class)->only([
+            'index', 'create', 'store', 'show'
+        ]);
+
         // Autres routes agent...
     });
 
@@ -87,4 +95,19 @@ Route::middleware(['auth'])->prefix('agent')->name('agent.')->group(function () 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('tontines', AdminTontineController::class);
     Route::post('tontines/{tontine}/finalize', [AdminTontineController::class, 'finalize'])->name('tontines.finalize');
+});
+Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
+    Route::get('/tontines', [AdminTontineController::class, 'index'])->name('tontines.index');
+    Route::get('/tontines/{id}', [AdminTontineController::class, 'show'])->name('tontines.show');
+    Route::get('/tontines/{id}/edit', [AdminTontineController::class, 'edit'])->name('tontines.edit');
+    Route::put('/tontines/{id}', [AdminTontineController::class, 'update'])->name('tontines.update');
+    Route::post('/tontines/{id}/pay', [AdminTontineController::class, 'pay'])->name('tontines.pay');
+
+    Route::get('/collectes', [AdminCollecteController::class, 'index'])->name('collectes.index');
+    Route::get('/collectes/{id}', [AdminCollecteController::class, 'show'])->name('collectes.show');
+
+    Route::get('/payouts', [AdminPayoutController::class, 'index'])->name('payouts.index');
+    Route::get('/payouts/create/{tontine?}', [AdminPayoutController::class, 'create'])->name('payouts.create');
+    Route::post('/payouts', [AdminPayoutController::class, 'store'])->name('payouts.store');
+    Route::get('/payouts/{id}', [AdminPayoutController::class, 'show'])->name('payouts.show');
 });

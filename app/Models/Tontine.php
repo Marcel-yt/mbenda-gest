@@ -37,6 +37,10 @@ class Tontine extends Model
         'start_date' => 'date',
         'expected_end_date' => 'date',
         'actual_end_date' => 'date',
+        // ajoute si les colonnes existent en DB:
+        // 'completed_at' => 'datetime',
+        // 'paid_at' => 'datetime',
+        // 'archived_at' => 'datetime',
     ];
 
     // relations
@@ -100,5 +104,41 @@ class Tontine extends Model
                 }
             }
         });
+    }
+
+    public function updateStatusAfterCollecte(): void
+    {
+        // Ne rien faire si l'état ne doit pas bouger
+        if (in_array($this->status, ['paid','archived','cancelled'], true)) {
+            return;
+        }
+
+        $count = \App\Models\Collecte::where('tontine_id', $this->id)->count();
+
+        if ($this->status === 'draft' && $count >= 1) {
+            $this->status = 'active';
+        }
+
+        if ($count >= $this->duration_days && !in_array($this->status, ['completed','paid'], true)) {
+            $this->status = 'completed';
+            $this->completed_at = $this->completed_at ?: now();
+            $this->actual_end_date = $this->actual_end_date ?: now()->toDateString();
+        }
+
+        $this->save();
+    }
+
+    // Classes Tailwind pour le badge de statut
+    public function getStatusBadgeClassesAttribute(): string
+    {
+        return match ($this->status) {
+            'completed' => 'bg-blue-600 text-white',   // primaire (bleu)
+            'active'    => 'bg-green-600 text-white',
+            'draft'     => 'bg-gray-300 text-gray-800',
+            'paid'      => 'bg-purple-600 text-white', // assure un fond pour paid
+            'archived'  => 'bg-amber-600 text-white',
+            'cancelled' => 'bg-red-600 text-white',
+            default     => 'bg-gray-200 text-gray-700',
+        };
     }
 }
