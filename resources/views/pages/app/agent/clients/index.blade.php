@@ -4,9 +4,37 @@
 @section('page_title', 'Clients')
 
 @section('content')
-@php
-  /** @var \Illuminate\Pagination\LengthAwarePaginator $clients */
-@endphp
+<form id="client-filters" method="GET" action="{{ route('clients.index') }}" class="mb-3">
+  <div class="bg-white border rounded-xl p-3 flex items-end gap-4 flex-nowrap overflow-x-auto">
+    <div class="shrink-0" style="width:400px;">
+      <label class="text-xs text-gray-500 mb-1 block">Recherche</label>
+      <input type="text" name="q" value="{{ $q }}" class="mb-input" placeholder="Nom / tél / adresse" autocomplete="off">
+    </div>
+    <div class="shrink-0" style="width:180px;">
+      <label class="text-xs text-gray-500 mb-1 block">Du</label>
+      <input type="date" name="date_from" value="{{ $date_from }}" class="mb-input">
+    </div>
+    <div class="shrink-0" style="width:180px;">
+      <label class="text-xs text-gray-500 mb-1 block">Au</label>
+      <input type="date" name="date_to" value="{{ $date_to }}" class="mb-input">
+    </div>
+    <div class="shrink-0" style="width:180px;">
+      <label class="text-xs text-gray-500 mb-1 block">Statut</label>
+      <select name="status" class="mb-input">
+        <option value="">Tous</option>
+        <option value="active" @selected(in_array($status,['active','1'],true))>Actif</option>
+        <option value="inactive" @selected(in_array($status,['inactive','0'],true))>Inactif</option>
+      </select>
+    </div>
+    <div class="shrink-0" style="width:130px;">
+      <label class="text-xs text-transparent mb-1 block">Reset</label>
+      <button type="button" id="reset-dates"
+              class="w-full inline-flex justify-center items-center px-3 py-3 rounded-md border border-[var(--mb-primary)] bg-white text-xs text-[var(--mb-primary)] hover:bg-gray-200">
+        Réinitialiser
+      </button>
+    </div>
+  </div>
+</form>
 
 <div class="space-y-6 max-w-7xl mx-auto">
   <div class="flex items-center justify-between">
@@ -91,8 +119,51 @@
 
     <div class="p-4 flex items-center justify-between">
       <div class="text-sm text-gray-500">Affichage {{ $clients->firstItem() ?? 0 }}‑{{ $clients->lastItem() ?? 0 }} sur {{ $clients->total() }}</div>
-      <div>{{ $clients->links() }}</div>
+      <div>{{ $clients->appends(request()->query())->links() }}</div>
     </div>
   </section>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const f = document.getElementById('client-filters');
+  if (!f) return;
+
+  const submit = () => f.requestSubmit(); // mieux que form.submit()
+
+  // Recherche: soumission à chaque frappe (instantané)
+  const q = f.querySelector('input[name="q"]');
+  if (q) {
+    q.addEventListener('input', submit);
+    q.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { q.value=''; submit(); }
+    });
+  }
+
+  // Dates + statut: soumission immédiate
+  ['date_from','date_to','status'].forEach(name => {
+    const el = f.querySelector(`[name="${name}"]`);
+    if (el) el.addEventListener('change', submit);
+  });
+
+  // Réinitialiser (vide tous les filtres)
+  const reset = document.getElementById('reset-dates');
+  if (reset) {
+    reset.addEventListener('click', () => {
+      ['q','date_from','date_to','status'].forEach(name => {
+        const el = f.querySelector(`[name="${name}"]`);
+        if (!el) return;
+        if (el.tagName === 'SELECT') {
+          el.selectedIndex = 0;
+        } else {
+          el.value = '';
+        }
+      });
+      submit();
+    });
+  }
+});
+</script>
 @endsection

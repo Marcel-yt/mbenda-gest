@@ -28,13 +28,40 @@ class UserController extends Controller
             $query = User::where('role', 'agent');
         }
 
-        $users = $query
-            ->where('id', '!=', auth()->id())
-            ->with('creator') // charger l'utilisateur créateur si relation définie
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        $roleFilterEnabled = ! empty($auth->is_super_admin);
+        $q      = trim(request('q',''));
+        $status = request('status','');
+        $role   = request('role','');
 
-        return view('pages.app.admin.users.index', compact('users'));
+        if ($q !== '') {
+            $query->where(function ($sub) use ($q) {
+                $sub->where('first_name','like','%'.$q.'%')
+                    ->orWhere('last_name','like','%'.$q.'%')
+                    ->orWhere('email','like','%'.$q.'%')
+                    ->orWhere('phone','like','%'.$q.'%');
+            });
+        }
+
+        if ($roleFilterEnabled && in_array($role,['admin','agent'], true)) {
+            $query->where('role',$role);
+        } else {
+            $role = '';
+        }
+
+        if (in_array($status,['active','inactive'], true)) {
+            $query->where('active', $status === 'active');
+        } else {
+            $status = '';
+        }
+
+        $users = $query
+            ->where('id','!=',$auth->id)
+            ->with('creator')
+            ->orderBy('created_at','desc')
+            ->paginate(15)
+            ->appends(request()->query());
+
+        return view('pages.app.admin.users.index', compact('users','q','status','role','roleFilterEnabled'));
     }
 
     // Affiche le formulaire de création

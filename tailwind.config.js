@@ -22,14 +22,21 @@ export default {
 
 module.exports = {
   content: [
-    './resources/**/*.blade.php',
-    './resources/**/*.js',
-    './resources/**/*.vue',
+    './resources/views/**/*.blade.php',
+    './resources/js/**/*.js',
+    './app/View/Components/**/*.php',
   ],
   safelist: [
-    'bg-blue-600','bg-green-600','bg-gray-300','bg-purple-600','bg-amber-600','bg-red-600',
-    'text-white','text-gray-800','text-gray-700',
+    'bg-gray-100','text-gray-700','border-gray-300',
+    'bg-green-100','text-green-700','border-green-200',
+    'bg-blue-100','text-blue-700','border-blue-200',
+    'bg-orange-100','text-orange-700','border-orange-200',
+    'bg-yellow-100','text-yellow-700','border-yellow-200',
+    'bg-red-100','text-red-700','border-red-200',
+    'border','rounded','px-2','py-1','text-xs','font-medium','inline-flex','items-center'
   ],
-  theme: { extend: {} },
+  theme: {
+    extend: {},
+  },
   plugins: [],
 }

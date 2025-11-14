@@ -7,16 +7,52 @@ use App\Models\Payout;
 use App\Models\Tontine;
 use App\Models\Collecte;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class PayoutController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $payouts = Payout::with(['tontine.client','admin'])->latest('id')->paginate(20);
-        return view('pages.app.admin.payouts.index', compact('payouts'));
+        $qClient   = trim($request->get('q_client',''));
+        $paidFrom  = $request->get('paid_from','');
+        $paidTo    = $request->get('paid_to','');
+
+        $query = Payout::with(['client','tontine','admin'])->orderByDesc('id');
+
+        if ($qClient !== '') {
+            $query->where(function($w) use ($qClient) {
+                $w->whereHas('client', function($c) use ($qClient) {
+                    $c->where('first_name','like',"%{$qClient}%")
+                      ->orWhere('last_name','like',"%{$qClient}%")
+                      ->orWhere('phone','like',"%{$qClient}%");
+                    if (\Schema::hasColumn('clients','email')) {
+                        $c->orWhere('email','like',"%{$qClient}%");
+                    }
+                })
+                ->orWhereHas('tontine', function($t) use ($qClient) {
+                    $t->where('code','like',"%{$qClient}%");
+                });
+            });
+        }
+
+        $from = $to = null;
+        try { if ($paidFrom) $from = Carbon::createFromFormat('Y-m-d',$paidFrom)->startOfDay(); } catch(\Throwable $e){ $paidFrom=''; }
+        try { if ($paidTo)   $to   = Carbon::createFromFormat('Y-m-d',$paidTo)->endOfDay();   } catch(\Throwable $e){ $paidTo=''; }
+
+        if ($from && $to) {
+            $query->whereBetween('paid_at', [$from,$to]);
+        } elseif ($from) {
+            $query->where('paid_at','>=',$from);
+        } elseif ($to) {
+            $query->where('paid_at','<=',$to);
+        }
+
+        $payouts = $query->paginate(20)->appends($request->query());
+
+        return view('pages.app.admin.payouts.index', compact('payouts','qClient','paidFrom','paidTo'));
     }
 
     public function create(?int $tontine = null)

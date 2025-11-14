@@ -4,6 +4,37 @@
 @section('page_title', 'Toutes les collectes')
 
 @section('content')
+{{-- Filtres (une seule ligne, mêmes classes que clients) --}}
+<form id="collecte-filters" method="GET" action="{{ route('admin.collectes.index') }}" class="mb-3">
+  <div class="bg-white border rounded-xl p-3 flex items-end gap-2 flex-nowrap overflow-x-auto">
+    <div class="shrink-0" style="width:340px;">
+      <label class="text-xs text-gray-500 mb-1 block">Rechercher par Client</label>
+      <input type="text" name="q_client" value="{{ request('q_client', $qClient ?? '') }}" class="mb-input"
+             placeholder="Nom, prénom, téléphone, email" autocomplete="off">
+    </div>
+    <div class="shrink-0" style="width:340px;">
+      <label class="text-xs text-gray-500 mb-1 block">Rechercher par Agent</label>
+      <input type="text" name="q_agent" value="{{ request('q_agent', $qAgent ?? '') }}" class="mb-input"
+             placeholder="Nom, prénom, email" autocomplete="off">
+    </div>
+    <div class="shrink-0" style="width:160px;">
+      <label class="text-xs text-gray-500 mb-1 block">Du</label>
+      <input type="date" name="date_from" value="{{ request('date_from', $dateFrom ?? '') }}" class="mb-input">
+    </div>
+    <div class="shrink-0" style="width:160px;">
+      <label class="text-xs text-gray-500 mb-1 block">Au</label>
+      <input type="date" name="date_to" value="{{ request('date_to', $dateTo ?? '') }}" class="mb-input">
+    </div>
+    <div class="shrink-0" style="width:140px;">
+      <label class="text-xs text-transparent mb-1 block">Reset</label>
+      <button type="button" id="reset-dates"
+              class="w-full inline-flex justify-center items-center px-3 py-3 rounded-md border border-[var(--mb-primary)] bg-white text-xs text-[var(--mb-primary)] hover:bg-gray-200">
+        Réinitialiser dates
+      </button>
+    </div>
+  </div>
+</form>
+
 <div class="bg-white border rounded-xl shadow-sm overflow-hidden">
   <div class="overflow-x-auto">
     <table class="min-w-full divide-y divide-gray-200 text-sm">
@@ -102,4 +133,45 @@
     </nav>
   </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('collecte-filters');
+  if (!form) return;
+
+  const submit = () => form.submit();
+
+  const qc = form.querySelector('input[name="q_client"]');
+  if (qc) {
+    qc.setAttribute('autocomplete','off');
+    qc.addEventListener('input', submit);
+    qc.addEventListener('keydown', e => { if (e.key === 'Escape') { qc.value=''; submit(); }});
+  }
+
+  const qa = form.querySelector('input[name="q_agent"]');
+  if (qa) {
+    qa.setAttribute('autocomplete','off');
+    qa.addEventListener('input', submit);
+    qa.addEventListener('keydown', e => { if (e.key === 'Escape') { qa.value=''; submit(); }});
+  }
+
+  ['date_from','date_to'].forEach(n => {
+    const el = form.querySelector(`[name="${n}"]`);
+    if (el) el.addEventListener('change', submit);
+  });
+
+  const reset = document.getElementById('reset-dates');
+  if (reset) {
+    reset.addEventListener('click', () => {
+      const from = form.querySelector('input[name="date_from"]');
+      const to   = form.querySelector('input[name="date_to"]');
+      if (from) from.value = '';
+      if (to) to.value = '';
+      submit();
+    });
+  }
+});
+</script>
 @endsection

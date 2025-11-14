@@ -6,16 +6,52 @@ use App\Http\Controllers\Controller;
 use App\Models\Tontine;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Schema;
 
 class TontineController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tontines = Tontine::with(['client'])
-            ->latest('id')
-            ->paginate(20);
+        $q            = trim($request->get('q',''));
+        $status       = $request->get('status','');
+        $created_from = $request->get('created_from','');
+        $created_to   = $request->get('created_to','');
 
-        return view('pages.app.admin.tontines.index', compact('tontines'));
+        $allowed = ['draft','active','completed','paid','archived','cancelled'];
+
+        $query = \App\Models\Tontine::with(['client','creator'])->orderByDesc('id');
+
+        if ($q !== '') {
+            $query->where(function ($s) use ($q) {
+                $s->whereHas('client', function ($c) use ($q) {
+                    $c->where('first_name','like',"%{$q}%")
+                      ->orWhere('last_name','like',"%{$q}%")
+                      ->orWhere('phone','like',"%{$q}%");
+                    if (\Schema::hasColumn('clients','email')) {
+                        $c->orWhere('email','like',"%{$q}%");
+                    }
+                })
+                ->orWhere('code','like',"%{$q}%");
+            });
+        }
+
+        if ($status !== '' && in_array($status,$allowed,true)) {
+            $query->where('status',$status);
+        } else {
+            $status = '';
+        }
+
+        $from = $to = null;
+        try { if ($created_from) $from = \Carbon\Carbon::createFromFormat('Y-m-d',$created_from)->startOfDay(); } catch (\Throwable $e) { $created_from=''; }
+        try { if ($created_to)   $to   = \Carbon\Carbon::createFromFormat('Y-m-d',$created_to)->endOfDay();   } catch (\Throwable $e) { $created_to=''; }
+
+        if ($from && $to)        $query->whereBetween('created_at',[$from,$to]);
+        elseif ($from)           $query->where('created_at','>=',$from);
+        elseif ($to)             $query->where('created_at','<=',$to);
+
+        $tontines = $query->paginate(20)->appends($request->query());
+
+        return view('pages.app.admin.tontines.index', compact('tontines','q','status','created_from','created_to'));
     }
 
     public function show(int $id)

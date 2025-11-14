@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 :root{
   --mb-primary: #0078B7;
   --mb-secondary: #7FBC47;
@@ -24,6 +23,32 @@
 .mb-badge-agent{background:var(--mb-secondary);color:#fff}
 .mb-badge-client{background:#F3F4F6;color:#111}
 
-/* indicateur statut (active = secondaire ; inactive = tertiary chosen as "non-brand red") */
+/* indicateurs */
 .mb-ind-active{width:0.625rem;height:0.625rem;border-radius:9999px;background:var(--mb-secondary);display:inline-block}
 .mb-ind-inactive{width:0.625rem;height:0.625rem;border-radius:9999px;background:var(--mb-tertiary);display:inline-block}
+
+/* Styles de base des champs */
+@layer base {
+  input[type='text'],
+  input[type='email'],
+  input[type='number'],
+  input[type='password'],
+  input[type='date'],
+  input[type='time'],
+  input[type='search'],
+  select,
+  textarea {
+    @apply w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400
+           focus:outline-none focus:ring-2 focus:ring-[var(--mb-primary)] focus:ring-opacity-30
+           focus:border-[var(--mb-primary)] disabled:bg-gray-100 disabled:text-gray-500;
+  }
+}
+
+/* Classe utilitaire */
+@layer components {
+  .mb-input {
+    @apply w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400
+           focus:outline-none focus:ring-2 focus:ring-[var(--mb-primary)] focus:ring-opacity-30
+           focus:border-[var(--mb-primary)];
+  }
+}

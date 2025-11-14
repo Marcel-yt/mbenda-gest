@@ -12,17 +12,47 @@ use Illuminate\Support\Facades\Storage;
 class ClientController extends Controller
 {
     /**
-     * Liste des clients.
-     * Tous les agents (et admins) voient la même liste : tous les clients.
+     * Liste des clients (avec filtres).
      */
     public function index(Request $request): View
     {
-        $clients = Client::query()
-            ->with('creatorAgent')
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
+        $q         = trim($request->get('q',''));
+        $status    = $request->get('status','');
+        $date_from = $request->get('date_from','');
+        $date_to   = $request->get('date_to','');
 
-        return view('pages.app.agent.clients.index', compact('clients'));
+        $query = Client::with('creatorAgent');
+
+        if ($q !== '') {
+            $query->where(function ($w) use ($q) {
+                $w->where('first_name','like',"%{$q}%")
+                  ->orWhere('last_name','like',"%{$q}%")
+                  ->orWhere('phone','like',"%{$q}%")
+                  ->orWhere('address','like',"%{$q}%");
+            });
+        }
+
+        if (in_array($status, ['active','inactive','1','0'], true)) {
+            $query->where('statut', in_array($status, ['active','1'], true));
+        } else {
+            $status = '';
+        }
+
+        $from = $to = null;
+        try { if ($date_from) $from = \Carbon\Carbon::createFromFormat('Y-m-d',$date_from)->startOfDay(); } catch (\Throwable $e) { $date_from=''; }
+        try { if ($date_to)   $to   = \Carbon\Carbon::createFromFormat('Y-m-d',$date_to)->endOfDay();   } catch (\Throwable $e) { $date_to=''; }
+
+        if ($from && $to) {
+            $query->whereBetween('created_at', [$from,$to]);
+        } elseif ($from) {
+            $query->where('created_at','>=',$from);
+        } elseif ($to) {
+            $query->where('created_at','<=',$to);
+        }
+
+        $clients = $query->orderByDesc('id')->paginate(20)->appends($request->query());
+
+        return view('pages.app.agent.clients.index', compact('clients','q','status','date_from','date_to'));
     }
 
     /**
@@ -73,14 +103,13 @@ class ClientController extends Controller
         $client->created_by_agent_id = $request->user()->id;
         $client->statut     = $request->boolean('statut', true);
         $client->photo_profil = $data['photo_profil'] ?? null;
-        // registered_at removed; created_at (laravel) will reflect creation time
         $client->save();
 
         return redirect()->route('clients.show', $client)->with('success', 'Client créé.');
     }
 
     /**
-     * Affiche un client. Tous les agents peuvent voir.
+     * Affiche un client.
      */
     public function show(Request $request, int $id): View
     {
@@ -90,14 +119,13 @@ class ClientController extends Controller
     }
 
     /**
-     * Formulaire d'édition (agents seulement, propriétaire du client).
+     * Formulaire d'édition (agents seulement, propriétaire ou admin/super_admin).
      */
     public function edit(Request $request, int $id): View
     {
         $user = $request->user();
         $client = Client::findOrFail($id);
 
-        // only owner or admin/super_admin can edit
         if (! ($user->id === $client->created_by_agent_id || in_array($user->role, ['admin','super_admin']))) {
             abort(403);
         }
@@ -106,14 +134,13 @@ class ClientController extends Controller
     }
 
     /**
-     * Mise à jour du client (agents seulement, propriétaire du client).
+     * Mise à jour du client.
      */
     public function update(Request $request, int $id): RedirectResponse
     {
         $user = $request->user();
         $client = Client::findOrFail($id);
 
-        // only owner or admin/super_admin can update
         if (! ($user->id === $client->created_by_agent_id || in_array($user->role, ['admin','super_admin']))) {
             abort(403);
         }
@@ -150,14 +177,13 @@ class ClientController extends Controller
     }
 
     /**
-     * Suppression (soft delete) d'un client (seul l'admin ou super_admin).
+     * Suppression (soft delete) d'un client (admin ou super_admin).
      */
     public function destroy(Request $request, int $id): RedirectResponse
     {
         $user = $request->user();
         $client = Client::findOrFail($id);
 
-        // only admin or super_admin can delete
         if (! in_array($user->role, ['admin','super_admin'])) {
             abort(403);
         }

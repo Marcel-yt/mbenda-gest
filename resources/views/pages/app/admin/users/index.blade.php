@@ -23,6 +23,38 @@
     clients-route="admin.clients.index"
   />
 
+  <form method="GET" action="{{ route('admin.users.index') }}" class="mb-4" id="user-filters">
+    <div class="bg-white border rounded-xl p-4 grid gap-4 md:grid-cols-4">
+      <div class="md:col-span-2">
+        <label class="text-xs text-gray-500 mb-1 block">Recherche (nom, prénom, email, téléphone)</label>
+        <input type="text" name="q" value="{{ old('q',$q ?? '') }}" class="mb-input" placeholder="Rechercher...">
+      </div>
+
+      @if(auth()->user()?->is_super_admin)
+        <div>
+          <label class="text-xs text-gray-500 mb-1 block">Rôle</label>
+          <select name="role" class="mb-input">
+            <option value="">Tous</option>
+            <option value="admin" @selected(($role ?? '')==='admin')>Admin</option>
+            <option value="agent" @selected(($role ?? '')==='agent')>Agent</option>
+          </select>
+        </div>
+      @else
+        <input type="hidden" name="role" value="agent">
+      @endif
+
+      <div>
+        <label class="text-xs text-gray-500 mb-1 block">Statut</label>
+        <select name="status" class="mb-input">
+          <option value="">Tous</option>
+          <option value="active"   @selected(($status ?? '')==='active')>Actif</option>
+          <option value="inactive" @selected(($status ?? '')==='inactive')>Désactivé</option>
+        </select>
+      </div>
+      {{-- Suppression du bouton Réinitialiser (filtrage entièrement interactif) --}}
+    </div>
+  </form>
+
   <!-- Titre + bouton -->
   <div class="flex items-center justify-between">
     <h2 class="text-lg font-semibold">Liste des agents et admins</h2>
@@ -115,8 +147,42 @@
 
     <div class="p-4 flex items-center justify-between">
       <div class="text-sm text-gray-500">Affichage {{ $users->firstItem() ?? 0 }}‑{{ $users->lastItem() ?? 0 }} sur {{ $users->total() }}</div>
-      <div>{{ $users->links() }}</div>
+      <div>{{ $users->appends(request()->query())->links() }}</div>
     </div>
   </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+(function(){
+  const ready = (cb) => {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', cb);
+    } else { cb(); }
+  };
+
+  ready(function(){
+    const form = document.getElementById('user-filters');
+    if (!form) return;
+
+    const submit = () => form.submit(); // GET immédiat
+
+    // Saisie: soumission à chaque frappe
+    const input = form.querySelector('input[name="q"]');
+    if (input) {
+      input.setAttribute('autocomplete','off');
+      input.addEventListener('input', submit);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') { input.value=''; submit(); }
+      });
+    }
+
+    // Menus déroulants: soumission instantanée
+    form.querySelectorAll('select').forEach(sel => {
+      sel.addEventListener('change', submit);
+    });
+  });
+})();
+</script>
 @endsection

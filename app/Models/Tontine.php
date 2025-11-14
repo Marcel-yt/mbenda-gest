@@ -132,13 +132,26 @@ class Tontine extends Model
     public function getStatusBadgeClassesAttribute(): string
     {
         return match ($this->status) {
-            'completed' => 'bg-blue-600 text-white',   // primaire (bleu)
-            'active'    => 'bg-green-600 text-white',
-            'draft'     => 'bg-gray-300 text-gray-800',
-            'paid'      => 'bg-purple-600 text-white', // assure un fond pour paid
-            'archived'  => 'bg-amber-600 text-white',
-            'cancelled' => 'bg-red-600 text-white',
-            default     => 'bg-gray-200 text-gray-700',
+            'draft'     => 'bg-gray-100 text-gray-700 border border-gray-300',
+            'active'    => 'bg-green-100 text-green-700 border border-green-200',
+            'completed' => 'bg-blue-100 text-blue-700 border border-blue-200',
+            'paid'      => 'bg-orange-100 text-orange-700 border border-orange-200',
+            'archived'  => 'bg-yellow-100 text-yellow-700 border border-yellow-200',
+            'cancelled' => 'bg-red-100 text-red-700 border border-red-200',
+            default     => 'bg-gray-100 text-gray-700 border border-gray-200',
+        };
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match ($this->status) {
+            'draft'     => 'Brouillon',
+            'active'    => 'Actif',
+            'completed' => 'Terminée',
+            'paid'      => 'Payée',
+            'archived'  => 'Archivée',
+            'cancelled' => 'Annulée',
+            default     => ucfirst($this->status),
         };
     }
 }

@@ -43,5 +43,9 @@
         </main>
       </div>
     </div>
+    {{-- juste avant la balise </body> --}}
+    @yield('scripts')
+    {{-- (optionnel si tu utilises aussi @push/@stack ailleurs) --}}
+    @stack('scripts')
   </body>
 </html>

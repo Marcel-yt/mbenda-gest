@@ -30,6 +30,40 @@
     <h2 class="text-lg font-semibold">Liste des Clients</h2>
   </div>
 
+  <!-- Filtres (une seule ligne) -->
+  <form id="client-filters" method="GET" action="{{ route('admin.clients.index') }}" class="mb-3">
+    <div class="bg-white border rounded-xl p-3 flex items-end gap-4 flex-nowrap overflow-x-auto">
+      <div class="shrink-0" style="width:460px;">
+        <label class="text-xs text-gray-500 mb-1 block">Recherche</label>
+        <input type="text" name="q" value="{{ request('q','') }}" class="mb-input"
+               placeholder="Nom, prénom, tél, adresse" autocomplete="off">
+      </div>
+      <div class="shrink-0" style="width:160px;">
+        <label class="text-xs text-gray-500 mb-1 block">Du</label>
+        <input type="date" name="date_from" value="{{ request('date_from','') }}" class="mb-input">
+      </div>
+      <div class="shrink-0" style="width:160px;">
+        <label class="text-xs text-gray-500 mb-1 block">Au</label>
+        <input type="date" name="date_to" value="{{ request('date_to','') }}" class="mb-input">
+      </div>
+      <div class="shrink-0" style="width:160px;">
+        <label class="text-xs text-gray-500 mb-1 block">Statut</label>
+        <select name="status" class="mb-input">
+          <option value="">Tous</option>
+          <option value="active" @selected(in_array(request('status'),['active','1'],true))>Actif</option>
+          <option value="inactive" @selected(in_array(request('status'),['inactive','0'],true))>Désactivé</option>
+        </select>
+      </div>
+      <div class="shrink-0" style="width:140px;">
+        <button type="button"
+                id="reset-dates"
+                class="w-full inline-flex justify-center items-center px-3 py-3 rounded-md border border-[var(--mb-primary)] bg-white text-xs text-[var(--mb-primary)] hover:bg-gray-200">
+          Réinitialiser dates
+        </button>
+      </div>
+    </div>
+  </form>
+
   <section class="bg-white border rounded-xl p-0 overflow-hidden">
     <div class="overflow-x-auto">
       <table class="min-w-full w-full divide-y divide-gray-200 text-sm">
@@ -90,8 +124,38 @@
 
     <div class="p-4 flex items-center justify-between">
       <div class="text-sm text-gray-500">Affichage {{ $clients->firstItem() ?? 0 }}‑{{ $clients->lastItem() ?? 0 }} sur {{ $clients->total() }}</div>
-      <div>{{ $clients->links() }}</div>
+      <div>{{ $clients->appends(request()->query())->links() }}</div>
     </div>
   </section>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+(function(){
+  const form = document.getElementById('client-filters');
+  if(!form) return;
+  const submit = () => form.submit();
+
+  const q = form.querySelector('input[name="q"]');
+  if (q) {
+    q.addEventListener('input', submit);
+    q.addEventListener('keydown', e => { if (e.key === 'Escape') { q.value=''; submit(); }});
+  }
+  form.querySelectorAll('input[type="date"], select[name="status"]').forEach(el=>{
+    el.addEventListener('change', submit);
+  });
+
+  const resetBtn = document.getElementById('reset-dates');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      const from = form.querySelector('input[name="date_from"]');
+      const to   = form.querySelector('input[name="date_to"]');
+      if (from) from.value = '';
+      if (to) to.value = '';
+      submit();
+    });
+  }
+})();
+</script>
 @endsection

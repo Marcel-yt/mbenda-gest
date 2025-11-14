@@ -2,6 +2,33 @@
 
 @section('title','Payouts')
 @section('content')
+
+{{-- Filtres (une ligne, client + plage de paiement) --}}
+<form id="payout-filters" method="GET" action="{{ route('admin.payouts.index') }}" class="mb-3">
+  <div class="bg-white border rounded-xl p-3 flex items-end gap-4 flex-nowrap overflow-x-auto">
+    <div class="shrink-0" style="width:460px;">
+      <label class="text-xs text-gray-500 mb-1 block">Client / Code</label>
+      <input type="text" name="q_client" value="{{ request('q_client',$qClient ?? '') }}"
+             class="mb-input" placeholder="Nom, prénom, tél, email, code" autocomplete="off">
+    </div>
+    <div class="shrink-0" style="width:160px;">
+      <label class="text-xs text-gray-500 mb-1 block">Payé du</label>
+      <input type="date" name="paid_from" value="{{ request('paid_from',$paidFrom ?? '') }}" class="mb-input">
+    </div>
+    <div class="shrink-0" style="width:160px;">
+      <label class="text-xs text-gray-500 mb-1 block">Au</label>
+      <input type="date" name="paid_to" value="{{ request('paid_to',$paidTo ?? '') }}" class="mb-input">
+    </div>
+    <div class="shrink-0" style="width:140px;">
+      <label class="text-xs text-transparent mb-1 block">Reset</label>
+      <button type="button" id="reset-dates"
+              class="w-full inline-flex justify-center items-center px-3 py-3 rounded-md border border-[var(--mb-primary)] bg-white text-xs text-[var(--mb-primary)] hover:bg-gray-200">
+        Réinitialiser
+      </button>
+    </div>
+  </div>
+</form>
+
 <div class="bg-white border rounded-xl shadow-sm overflow-hidden">
   <div class="p-4">
     <div class="text-sm font-medium">Liste des paiements</div>
@@ -63,6 +90,38 @@
       </tbody>
     </table>
   </div>
-  <div class="p-4">{{ $payouts->links() }}</div>
+  <div class="p-4">{{ $payouts->appends(request()->query())->links() }}</div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('payout-filters');
+  if (!form) return;
+  const submit = () => form.submit();
+
+  const qc = form.querySelector('input[name="q_client"]');
+  if (qc) {
+    qc.setAttribute('autocomplete','off');
+    qc.addEventListener('input', submit);
+    qc.addEventListener('keydown', e => { if (e.key === 'Escape') { qc.value=''; submit(); }});
+  }
+  ['paid_from','paid_to'].forEach(n=>{
+    const el = form.querySelector(`[name="${n}"]`);
+    if (el) el.addEventListener('change', submit);
+  });
+
+  const reset = document.getElementById('reset-dates');
+  if (reset) {
+    reset.addEventListener('click', () => {
+      const f = form.querySelector('input[name="paid_from"]');
+      const t = form.querySelector('input[name="paid_to"]');
+      if (f) f.value='';
+      if (t) t.value='';
+      submit();
+    });
+  }
+});
+</script>
 @endsection

@@ -6,11 +6,46 @@
 @section('content')
 @php /** @var \Illuminate\Pagination\LengthAwarePaginator $tontines */ @endphp
 
-<div class="flex items-center justify-between mb-4">
-  <h2 class="text-lg font-semibold">Toutes les tontines</h2>
+<div class="flex items-center justify-between">
   {{-- (Optionnel) Bouton de création admin si nécessaire --}}
   {{-- <a href="{{ route('admin.tontines.create') }}" class="mb-btn-secondary px-3 py-2 rounded">+ Créer une tontine</a> --}}
 </div>
+
+{{-- Filtres: tout sur une ligne dans un conteneur, soumission instantanée --}}
+<form id="tontine-filters" method="GET" action="{{ route('admin.tontines.index') }}" class="mb-3">
+  <div class="bg-white border rounded-xl p-3 flex items-end gap-4 flex-nowrap overflow-x-auto">
+    <div class="shrink-0" style="width:460px;">
+      <label class="text-xs text-gray-500 mb-1 block">Recherche client</label>
+      <input type="text" name="q" value="{{ old('q', $q ?? request('q','')) }}" class="mb-input"
+             placeholder="Nom, prénom, email, téléphone, code" autocomplete="off">
+    </div>
+    <div class="shrink-0" style="width:160px;">
+      <label class="text-xs text-gray-500 mb-1 block">Créée du</label>
+      <input type="date" name="created_from" value="{{ old('created_from', $created_from ?? request('created_from','')) }}" class="mb-input">
+    </div>
+    <div class="shrink-0" style="width:160px;">
+      <label class="text-xs text-gray-500 mb-1 block">Au</label>
+      <input type="date" name="created_to" value="{{ old('created_to', $created_to ?? request('created_to','')) }}" class="mb-input">
+    </div>
+    <div class="shrink-0" style="width:180px;">
+      <label class="text-xs text-gray-500 mb-1 block">Statut</label>
+      <select name="status" class="mb-input">
+        <option value="">Tous</option>
+        <option value="draft"     @selected(($status ?? request('status'))==='draft')>Brouillon</option>
+        <option value="active"    @selected(($status ?? request('status'))==='active')>Actif</option>
+        <option value="completed" @selected(($status ?? request('status'))==='completed')>Terminée</option>
+        <option value="paid"      @selected(($status ?? request('status'))==='paid')>Payée</option>
+      </select>
+    </div>
+    <div class="shrink-0" style="width:140px;">
+      <button type="button"
+              id="reset-dates"
+              class="w-full inline-flex justify-center items-center px-3 py-3 rounded-md border border-[var(--mb-primary)] bg-white text-xs text-[var(--mb-primary)] hover:bg-gray-200">
+        Réinitialiser dates
+      </button>
+    </div>
+  </div>
+</form>
 
 <section class="bg-white border rounded-xl p-0 overflow-hidden">
   <div class="overflow-x-auto">
@@ -39,7 +74,7 @@
             <td class="px-4 py-3">{{ $t->creator?->email ?? '-' }}</td>
             <td class="px-4 py-3">
               <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium {{ $t->status_badge_classes }}">
-                {{ ucfirst($t->status) }}
+                {{ $t->status_label }}
               </span>
             </td>
             <td class="px-4 py-3 text-right">
@@ -71,7 +106,43 @@
   </div>
 
   <div class="p-4">
-    {{ $tontines->links() }}
+    {{ $tontines->appends(request()->query())->links() }}
   </div>
 </section>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('tontine-filters');
+  if (!form) return;
+  const submit = () => form.submit();
+
+  const q = form.querySelector('input[name="q"]');
+  if (q) {
+    q.setAttribute('autocomplete','off');
+    q.addEventListener('input', submit);
+    q.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') { q.value=''; submit(); } });
+  }
+
+  ['created_from','created_to'].forEach(n => {
+    const el = form.querySelector(`[name="${n}"]`);
+    if (el) el.addEventListener('change', submit);
+  });
+
+  const status = form.querySelector('select[name="status"]');
+  if (status) status.addEventListener('change', submit);
+
+  const resetBtn = document.getElementById('reset-dates');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      const from = form.querySelector('input[name="created_from"]');
+      const to   = form.querySelector('input[name="created_to"]');
+      if (from) from.value = '';
+      if (to) to.value = '';
+      submit();
+    });
+  }
+});
+</script>
 @endsection
