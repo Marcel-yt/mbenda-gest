@@ -24,22 +24,22 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="text-xs text-gray-500">Prénom</label>
-          <input name="first_name" value="{{ old('first_name') }}" required class="mt-1 block w-full rounded border-gray-300" />
+          <input name="first_name" value="{{ old('first_name') }}" required class="mb-input" />
         </div>
         <div>
           <label class="text-xs text-gray-500">Nom</label>
-          <input name="last_name" value="{{ old('last_name') }}" required class="mt-1 block w-full rounded border-gray-300" />
+          <input name="last_name" value="{{ old('last_name') }}" required class="mb-input" />
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="text-xs text-gray-500">Indicatif</label>
-          <input name="indicatif" value="{{ old('indicatif') }}" class="mt-1 block w-full rounded border-gray-300" />
+          <input name="indicatif" value="{{ old('indicatif') }}" class="mb-input" />
         </div>
         <div>
           <label class="text-xs text-gray-500">Téléphone</label>
-          <input name="phone" value="{{ old('phone') }}" class="mt-1 block w-full rounded border-gray-300" />
+          <input type="tel" name="phone" value="{{ old('phone') }}" class="mb-input" />
         </div>
       </div>
 
@@ -48,7 +48,7 @@
           <label class="text-xs text-gray-500">Statut</label>
           <div class="mt-1 flex items-center gap-3">
             <span id="statut-indicator" class="inline-block w-3 h-3 rounded-full" style="background: {{ $stat === '1' ? '#16A34A' : '#DC2626' }};"></span>
-            <select id="statut-select" name="statut" class="block w-full rounded border-gray-300 text-sm">
+            <select id="statut-select" name="statut" class="mb-input text-sm">
               <option value="1" {{ $stat === '1' ? 'selected' : '' }}>Activé</option>
               <option value="0" {{ $stat === '0' ? 'selected' : '' }}>Désactivé</option>
             </select>
@@ -63,18 +63,18 @@
 
       <div>
         <label class="text-xs text-gray-500">Adresse</label>
-        <input name="address" value="{{ old('address') }}" required class="mt-1 block w-full rounded border-gray-300" />
+        <input name="address" value="{{ old('address') }}" required class="mb-input" />
       </div>
 
       <div>
         <label class="text-xs text-gray-500">Notes</label>
-        <textarea name="notes" class="mt-1 block w-full rounded border-gray-300" rows="3">{{ old('notes') }}</textarea>
+        <textarea name="notes" class="mb-input" rows="3">{{ old('notes') }}</textarea>
       </div>
 
       {{-- photo de profil --}}
       <div>
         <label class="text-xs text-gray-500">Photo de profil</label>
-        <input name="photo_profil" type="file" accept="image/*" class="mt-1 block w-full rounded border-gray-300 text-sm" />
+        <input name="photo_profil" type="file" accept="image/*" class="mb-input text-sm" />
       </div>
 
       <div class="flex items-center gap-3 pt-4">

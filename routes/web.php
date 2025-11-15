@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\TontineController as AdminTontineController;
 use App\Http\Controllers\Agent\CollecteController;
 use App\Http\Controllers\Admin\CollecteController as AdminCollecteController;
 use App\Http\Controllers\Admin\PayoutController as AdminPayoutController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
 // Page d’accueil publique
 Route::view('/', 'pages.public.welcome')->name('home');
@@ -36,7 +37,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth','verified','role:admin'])
     ->prefix('admin')->name('admin.')
     ->group(function () {
-        Route::view('/', 'pages.app.admin.dashboard')->name('dashboard');
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/stats', [AdminDashboardController::class, 'stats'])->name('dashboard.stats');
 
         // Resource routes pour users (index, create, store, show, edit, update, destroy)
         Route::resource('users', UserController::class)->names('users');
@@ -110,4 +112,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::get('/payouts/create/{tontine?}', [AdminPayoutController::class, 'create'])->name('payouts.create');
     Route::post('/payouts', [AdminPayoutController::class, 'store'])->name('payouts.store');
     Route::get('/payouts/{id}', [AdminPayoutController::class, 'show'])->name('payouts.show');
+});
+
+// Routes pour le dashboard agent
+Route::middleware(['auth','role:agent'])->prefix('agent')->name('agent.')->group(function(){
+    Route::get('/dashboard', [\App\Http\Controllers\Agent\DashboardController::class,'index'])->name('dashboard');
+    Route::get('/dashboard/stats', [\App\Http\Controllers\Agent\DashboardController::class,'stats'])->name('dashboard.stats');
+});
+
+// Routes pour le dashboard admin
+Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/stats', [AdminDashboardController::class, 'stats'])->name('dashboard.stats');
 });

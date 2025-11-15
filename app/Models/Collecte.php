@@ -43,11 +43,16 @@ class Collecte extends Model
 
     public function tontine()
     {
-        return $this->belongsTo(Tontine::class, 'tontine_id');
+        return $this->belongsTo(\App\Models\Tontine::class);
     }
 
     public function client()
     {
         return $this->belongsTo(Client::class, 'client_id');
+    }
+
+    public function getComputedAmountAttribute(): float
+    {
+        return (float) ($this->tontine?->daily_amount ?? 0);
     }
 }
