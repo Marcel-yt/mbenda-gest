@@ -41,77 +41,140 @@
     </div>
   </div>
 
-  {{-- Courbe 30 jours + donut statuts --}}
+  {{-- Graphiques analytiques --}}
   <div class="grid gap-6 lg:grid-cols-3">
-    <div class="bg-white border rounded-xl p-6 lg:col-span-2">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-sm font-semibold text-gray-800">Collectes – 30 derniers jours</h2>
+    {{-- Courbe évolution 30 jours --}}
+    <div class="bg-white border border-gray-200 rounded-2xl p-6 lg:col-span-2 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <h2 class="text-lg font-bold text-gray-900">Évolution des collectes</h2>
+          <p class="text-sm text-gray-500 mt-1">30 derniers jours</p>
+        </div>
+        <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+          </svg>
+        </div>
       </div>
-      <div class="h-64"><canvas id="chartDaily"></canvas></div>
+      <div class="h-72"><canvas id="chartDaily"></canvas></div>
     </div>
-    <div class="bg-white border rounded-xl p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-sm font-semibold text-gray-800">Collectes du jour — Conforme / Anticipé / Retardé</h2>
+
+    {{-- Donut timing collectes --}}
+    <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <h2 class="text-lg font-bold text-gray-900">Ponctualité</h2>
+          <p class="text-sm text-gray-500 mt-1">Collectes du jour</p>
+        </div>
+        <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
       </div>
-      <div class="h-64"><canvas id="chartTiming"></canvas></div>
+      <div class="h-72 flex items-center justify-center"><canvas id="chartTiming"></canvas></div>
     </div>
   </div>
 
-  {{-- Liste des clients collectés aujourd’hui --}}
-  <div class="bg-white border rounded-xl p-6">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-sm font-semibold text-gray-800">Clients collectés aujourd’hui</h2>
-      <span id="kpi-clients-collected-today-badge" class="text-xs text-gray-500">{{ $clientsCollectedTodayCount }} client(s)</span>
+  {{-- Liste des clients collectés aujourd'hui --}}
+  <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-lg font-bold text-gray-900">Clients collectés aujourd'hui</h2>
+          <p class="text-sm text-gray-500">Détail des collectes effectuées</p>
+        </div>
+      </div>
+      <span id="kpi-clients-collected-today-badge" class="px-3 py-1 text-xs font-semibold text-indigo-700 bg-indigo-100 rounded-full">{{ $clientsCollectedTodayCount }} client(s)</span>
     </div>
 
     @if($clientDailyStats->isEmpty())
-      <div id="clients-today-empty" class="py-8 text-center text-sm text-gray-500">Aucune collecte enregistrée aujourd’hui.</div>
+      <div id="clients-today-empty" class="py-12 text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+          <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        </div>
+        <p class="text-sm font-medium text-gray-900 mb-1">Aucune collecte aujourd'hui</p>
+        <p class="text-xs text-gray-500">Les collectes apparaîtront ici dès qu'elles seront enregistrées</p>
+      </div>
       <div class="overflow-x-auto hidden" id="clients-today-table-wrap">
         <table class="min-w-full text-sm">
-          <thead class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wide">
+          <thead class="bg-gradient-to-r from-gray-50 to-gray-100 border-y border-gray-200">
             <tr>
-              <th class="px-4 py-2 text-left">Client</th>
-              <th class="px-4 py-2 text-left">Adresse</th>
-              <th class="px-4 py-2 text-left">Date</th>
-              <th class="px-4 py-2 text-left">Heure</th>
-              <th class="px-4 py-2 text-left">Montant total</th>
-              <th class="px-4 py-2 text-left">Collectes</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Client</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Adresse</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Heure</th>
+              <th class="px-5 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">Montant total</th>
+              <th class="px-5 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Collectes</th>
             </tr>
           </thead>
-          <tbody id="clients-today-body" class="divide-y divide-gray-100"></tbody>
+          <tbody id="clients-today-body" class="divide-y divide-gray-100 bg-white"></tbody>
         </table>
       </div>
     @else
       <div class="overflow-x-auto" id="clients-today-table-wrap">
         <table class="min-w-full text-sm">
-          <thead class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wide">
+          <thead class="bg-gradient-to-r from-gray-50 to-gray-100 border-y border-gray-200">
             <tr>
-              <th class="px-4 py-2 text-left">Client</th>
-              <th class="px-4 py-2 text-left">Adresse</th>
-              <th class="px-4 py-2 text-left">Date</th>
-              <th class="px-4 py-2 text-left">Heure</th>
-              <th class="px-4 py-2 text-left">Montant total</th>
-              <th class="px-4 py-2 text-left">Collectes</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Client</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Adresse</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
+              <th class="px-5 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Heure</th>
+              <th class="px-5 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">Montant total</th>
+              <th class="px-5 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Collectes</th>
             </tr>
           </thead>
-          <tbody id="clients-today-body" class="divide-y divide-gray-100">
+          <tbody id="clients-today-body" class="divide-y divide-gray-100 bg-white">
             @foreach($clientDailyStats as $row)
               @php
                 $dt = $row['last_created_at'] ? \Carbon\Carbon::parse($row['last_created_at']) : null;
               @endphp
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-2">{{ $row['name'] }}</td>
-                <td class="px-4 py-2">{{ $row['address'] }}</td>
-                <td class="px-4 py-2">{{ $dt ? $dt->format('d/m/Y') : '—' }}</td>
-                <td class="px-4 py-2">{{ $dt ? $dt->format('H:i') : '—' }}</td>
-                <td class="px-4 py-2 font-medium">{{ number_format($row['amount'],2) }} XAF</td>
-                <td class="px-4 py-2 text-gray-600">{{ $row['count'] }}</td>
+              <tr class="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-blue-50 transition-colors">
+                <td class="px-5 py-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                      {{ strtoupper(substr($row['name'] ?? 'C', 0, 1)) }}
+                    </div>
+                    <span class="font-medium text-gray-900">{{ $row['name'] }}</span>
+                  </div>
+                </td>
+                <td class="px-5 py-4 text-gray-600">{{ $row['address'] ?? '—' }}</td>
+                <td class="px-5 py-4 text-gray-600">{{ $dt ? $dt->format('d/m/Y') : '—' }}</td>
+                <td class="px-5 py-4">
+                  <span class="inline-flex items-center gap-1 text-gray-600">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    {{ $dt ? $dt->format('H:i') : '—' }}
+                  </span>
+                </td>
+                <td class="px-5 py-4 text-right">
+                  <span class="font-bold text-green-600">{{ number_format($row['amount'],2) }} XAF</span>
+                </td>
+                <td class="px-5 py-4 text-center">
+                  <span class="inline-flex items-center justify-center w-8 h-8 bg-indigo-100 text-indigo-700 rounded-full text-xs font-semibold">{{ $row['count'] }}</span>
+                </td>
               </tr>
             @endforeach
           </tbody>
         </table>
       </div>
-      <div id="clients-today-empty" class="hidden py-8 text-center text-sm text-gray-500">Aucune collecte enregistrée aujourd’hui.</div>
+      <div id="clients-today-empty" class="hidden py-12 text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+          <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        </div>
+        <p class="text-sm font-medium text-gray-900 mb-1">Aucune collecte aujourd'hui</p>
+        <p class="text-xs text-gray-500">Les collectes apparaîtront ici dès qu'elles seront enregistrées</p>
+      </div>
     @endif
   </div>
 
@@ -204,14 +267,33 @@
 
     tbody.innerHTML = rows.map(r => {
       const t = r.last_created_at ? fmtDateTime(r.last_created_at) : {date:'—', time:'—'};
+      const initial = (r.name && r.name.length > 0) ? r.name.charAt(0).toUpperCase() : 'C';
       return `
-        <tr class="hover:bg-gray-50">
-          <td class="px-4 py-2">${r.name ?? '—'}</td>
-          <td class="px-4 py-2">${r.address ?? '—'}</td>
-          <td class="px-4 py-2">${t.date}</td>
-          <td class="px-4 py-2">${t.time}</td>
-          <td class="px-4 py-2 font-medium">${formatAmount(r.amount)} XAF</td>
-          <td class="px-4 py-2 text-gray-600">${r.count}</td>
+        <tr class="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-blue-50 transition-colors">
+          <td class="px-5 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                ${initial}
+              </div>
+              <span class="font-medium text-gray-900">${r.name ?? '—'}</span>
+            </div>
+          </td>
+          <td class="px-5 py-4 text-gray-600">${r.address ?? '—'}</td>
+          <td class="px-5 py-4 text-gray-600">${t.date}</td>
+          <td class="px-5 py-4">
+            <span class="inline-flex items-center gap-1 text-gray-600">
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              ${t.time}
+            </span>
+          </td>
+          <td class="px-5 py-4 text-right">
+            <span class="font-bold text-green-600">${formatAmount(r.amount)} XAF</span>
+          </td>
+          <td class="px-5 py-4 text-center">
+            <span class="inline-flex items-center justify-center w-8 h-8 bg-indigo-100 text-indigo-700 rounded-full text-xs font-semibold">${r.count}</span>
+          </td>
         </tr>
       `;
     }).join('');

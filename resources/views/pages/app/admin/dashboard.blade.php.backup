@@ -314,9 +314,8 @@
   const cm = document.getElementById('chartMonthlyIO');
   const cc = document.getElementById('chartCommissions')
   const cs = document.getElementById('chartStatus');
-  const cg = document.getElementById('chartClientsGrowth');
 
-  let chartDaily = null, chartMonthly = null, chartCom = null, chartStatus = null, chartGrowth = null;
+  let chartDaily = null, chartMonthly = null, chartCom = null, chartStatus = null;
 
   if (cd){
     chartDaily = new Chart(cd, {
@@ -376,81 +375,18 @@
     });
   }
 
-  // Graphique d'évolution des clients (12 derniers mois)
-  if (cg){
-    const now = new Date();
-    const growthLabels = [];
-    for (let i = 11; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      growthLabels.push(d.toLocaleDateString('fr-FR', {month: 'short', year: '2-digit'}));
-    }
-    chartGrowth = new Chart(cg, {
-      type: 'line',
-      data: {
-        labels: growthLabels,
-        datasets: [{
-          label: 'Nouveaux clients',
-          data: Array(12).fill(0),
-          borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59, 130, 246, 0.1)',
-          tension: 0.4,
-          fill: true,
-          pointRadius: 3,
-          pointHoverRadius: 5,
-          pointBackgroundColor: '#3b82f6',
-          borderWidth: 2
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: { mode: 'index', intersect: false },
-        plugins: { legend: { position: 'bottom' } },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: { precision: 0 }
-          }
-        }
-      }
-    });
-  }
-
   function nf(x){ try{ return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2}).format(x||0); }catch(e){ return Number(x||0).toFixed(2); } }
 
   function renderAgents(tbodyId, rows){
     const tb = document.getElementById(tbodyId);
     if (!tb) return;
-    const isToday = tbodyId === 'tbl-agents-today';
-    const hoverClass = isToday ? 'hover:bg-amber-50' : 'hover:bg-green-50';
-    
-    if (!rows || rows.length === 0) {
-      tb.innerHTML = `
-        <tr>
-          <td colspan="3" class="px-4 py-8 text-center text-gray-400">
-            <svg class="w-10 h-10 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
-            <p class="text-sm">${isToday ? 'Aucune collecte aujourd\'hui' : 'Aucune collecte ce mois'}</p>
-          </td>
-        </tr>
-      `;
-      return;
-    }
-    
-    tb.innerHTML = rows.map((r, i) => {
-      const badge = i < 3 ? `<span class="w-6 h-6 rounded-full bg-gradient-to-br ${isToday ? 'from-amber-400 to-orange-500' : 'from-green-400 to-emerald-500'} text-white text-xs font-bold flex items-center justify-center">${i + 1}</span>` : '';
-      return `
-        <tr class="${hoverClass} transition-colors">
-          <td class="px-4 py-3 flex items-center gap-2">
-            ${badge}
-            <span class="font-medium">${r.label}</span>
-          </td>
-          <td class="px-4 py-3">
-            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-semibold">${r.ops}</span>
-          </td>
-          <td class="px-4 py-3 font-bold text-green-600">${nf(r.amount)} XAF</td>
-        </tr>
-      `;
-    }).join('');
+    tb.innerHTML = (rows||[]).map(r => `
+      <tr class="hover:bg-gray-50">
+        <td class="px-4 py-2">${r.label}</td>
+        <td class="px-4 py-2 text-gray-700">${r.ops}</td>
+        <td class="px-4 py-2 font-medium">${nf(r.amount)} XAF</td>
+      </tr>
+    `).join('');
   }
 
   async function refresh(extraParams = {}){
@@ -472,24 +408,6 @@
       setText('kpi-out-total', nf(d.amountOutTotal)+' XAF');
       setText('kpi-net-total', nf(d.netTotal)+' XAF');
       setText('kpi-comm-total', nf(d.commissionTotal)+' XAF');
-
-      // Nouveaux KPIs
-      if (d.totalTontines > 0) {
-        const completed = (d.statusCounts?.completed || 0) + (d.statusCounts?.paid || 0);
-        const rate = ((completed / d.totalTontines) * 100).toFixed(1);
-        setText('kpi-completion-rate', rate + '%');
-        setText('kpi-completion-detail', completed + '/' + d.totalTontines + ' tontines terminées');
-      }
-      if (d.totalCollectes > 0 && d.amountInTotal > 0) {
-        const avg = (d.amountInTotal / d.totalCollectes).toFixed(0);
-        document.getElementById('kpi-avg-collecte').innerHTML = avg + ' <span class="text-sm text-gray-500">XAF</span>';
-      }
-      if (d.newClientsMonth !== undefined) {
-        setText('kpi-new-clients', d.newClientsMonth);
-      }
-      if (d.tontinesToFinalize !== undefined) {
-        setText('kpi-to-finalize', d.tontinesToFinalize);
-      }
 
       // Périodes
       if (d.periods){
@@ -537,12 +455,6 @@
         const order = ['draft','active','completed','paid','archived','cancelled'];
         chartStatus.data.datasets[0].data = order.map(k => d.statusCounts?.[k] || 0);
         chartStatus.update('active');
-      }
-
-      // Chart croissance clients
-      if (chartGrowth && d.clientsGrowth && d.clientsGrowth.length > 0){
-        chartGrowth.data.datasets[0].data = d.clientsGrowth;
-        chartGrowth.update('active');
       }
 
       // Agents

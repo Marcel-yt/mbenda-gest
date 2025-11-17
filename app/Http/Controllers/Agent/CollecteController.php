@@ -62,11 +62,17 @@ class CollecteController extends Controller
      * Formulaire de création d'une collecte.
      * Accepte ?tontine_id= pour pré-remplir la tontine/client.
      */
-    public function create(Request $request): View
+    public function create(Request $request): View|RedirectResponse
     {
         $tontine = $request->filled('tontine_id')
             ? Tontine::with('client')->findOrFail($request->query('tontine_id'))
             : null;
+
+        // Bloquer si la tontine est payée
+        if ($tontine && $tontine->status === 'paid') {
+            return redirect()->route('agent.collectes.index', ['tontine_id' => $tontine->id])
+                ->with('error', 'Cette tontine a été payée. Il n\'est plus possible d\'enregistrer de nouvelles collectes.');
+        }
 
         return view('pages.app.agent.collectes.create', compact('tontine'));
     }
@@ -85,6 +91,12 @@ class CollecteController extends Controller
         ]);
 
         $tontine = Tontine::findOrFail($data['tontine_id']);
+
+        // Bloquer si la tontine est payée
+        if ($tontine->status === 'paid') {
+            return redirect()->route('agent.collectes.index', ['tontine_id' => $tontine->id])
+                ->with('error', 'Cette tontine a été payée. Il n\'est plus possible d\'enregistrer de nouvelles collectes.');
+        }
 
         $collecte = Collecte::create([
             'tontine_id' => $tontine->id,

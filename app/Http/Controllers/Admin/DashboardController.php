@@ -108,6 +108,26 @@ class DashboardController extends Controller
             'year'  => $this->ioBetween($now->copy()->startOfYear(), $now->copy()->endOfYear()),
         ];
 
+        // Nouveaux KPIs
+        $newClientsMonth = DB::table('clients')
+            ->where('created_at', '>=', $now->copy()->startOfMonth())
+            ->count();
+
+        $tontinesToFinalize = DB::table('tontines')
+            ->whereIn('status', ['completed'])
+            ->count();
+
+        // Croissance clients (12 derniers mois)
+        $clientsGrowth = [];
+        for ($i = 11; $i >= 0; $i--) {
+            $monthStart = $now->copy()->subMonths($i)->startOfMonth();
+            $monthEnd = $monthStart->copy()->endOfMonth();
+            $count = DB::table('clients')
+                ->whereBetween('created_at', [$monthStart, $monthEnd])
+                ->count();
+            $clientsGrowth[] = $count;
+        }
+
         return compact(
             'totalClients',
             'totalTontines',
@@ -117,7 +137,10 @@ class DashboardController extends Controller
             'amountOutTotal',
             'commissionTotal',
             'netTotal',
-            'periods'
+            'periods',
+            'newClientsMonth',
+            'tontinesToFinalize',
+            'clientsGrowth'
         );
     }
 

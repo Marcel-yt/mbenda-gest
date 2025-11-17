@@ -14,6 +14,7 @@ return new class extends Migration
             $table->unsignedBigInteger('tontine_id')->index();
             $table->unsignedBigInteger('client_id')->index();
             $table->unsignedBigInteger('agent_id')->nullable()->index(); // agent who collected
+            $table->date('for_date')->nullable()->index(); // jour du calendrier pour cette collecte
 
             $table->text('notes')->nullable();
 

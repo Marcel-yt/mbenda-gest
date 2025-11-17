@@ -11,8 +11,9 @@ use App\Http\Controllers\Agent\CollecteController;
 use App\Http\Controllers\Admin\CollecteController as AdminCollecteController;
 use App\Http\Controllers\Admin\PayoutController as AdminPayoutController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Agent\DashboardController as AgentDashboardController;
 
-// Page d’accueil publique
+// Page d'accueil publique
 Route::view('/', 'pages.public.welcome')->name('home');
 Route::view('/about', 'pages.public.about')->name('about');
 Route::view('/contact', 'pages.public.contact')->name('contact');
@@ -56,7 +57,8 @@ Route::middleware(['auth','verified','role:admin'])
 Route::middleware(['auth','verified','role:agent'])
     ->prefix('agent')->name('agent.')
     ->group(function () {
-        Route::view('/', 'pages.app.agent.dashboard')->name('dashboard');
+        Route::get('/', [AgentDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard/stats', [AgentDashboardController::class, 'stats'])->name('dashboard.stats');
 
         // Routes pour la gestion des tontines (agent uniquement)
         Route::resource('tontines', AgentTontineController::class)->only(['index','create','store','show','edit','update']);

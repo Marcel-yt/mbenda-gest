@@ -14,8 +14,8 @@
       {{-- Sidebar Agent --}}
       @include('layouts.navigation-agent')
 
-      {{-- Contenu principal --}}
-      <div class="flex-1 flex flex-col min-w-0">
+      {{-- Contenu principal avec marge pour sidebar fixe --}}
+      <div class="flex-1 flex flex-col min-w-0 lg:ml-64">
         <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-6">
           <div class="flex items-center gap-3">
             <!-- Hamburger (visible sur petits écrans) -->
