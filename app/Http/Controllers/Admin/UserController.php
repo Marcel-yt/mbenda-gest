@@ -269,9 +269,9 @@ class UserController extends Controller
             Storage::disk('public')->delete($user->photo_profil);
         }
 
-        // Soft delete (ou delete définitif selon votre modèle)
-        $user->delete();
+        // Suppression définitive (forceDelete) pour supprimer réellement de la base de données
+        $user->forceDelete();
 
-        return redirect()->route('admin.users.index')->with('success', 'Utilisateur supprimé.');
+        return redirect()->route('admin.users.index')->with('success', 'Utilisateur supprimé définitivement.');
     }
 }

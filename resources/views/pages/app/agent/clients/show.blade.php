@@ -96,6 +96,12 @@
         </div>
       </div>
       <div class="flex items-center gap-2">
+        <a href="{{ route('clients.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Retour
+        </a>
         @if(auth()->user()->isAgent() && $client->created_by_agent_id === auth()->id())
           <a href="{{ route('clients.edit', $client) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold shadow-md transition-all hover:shadow-lg" style="background: var(--mb-tertiary);">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -565,16 +565,25 @@
   const fFrom  = document.getElementById('f-date-from');
   const fTo    = document.getElementById('f-date-to');
 
-  if (fApply) fApply.addEventListener('click', ev => {
-    ev.preventDefault();
-    refresh({ date_from: fFrom?.value || '', date_to: fTo?.value || '' });
-  });
-  if (fReset) fReset.addEventListener('click', ev => {
-    ev.preventDefault();
-    if (fFrom) fFrom.value = '';
-    if (fTo)   fTo.value   = '';
-    refresh({});
-  });
+  if (fApply) {
+    fApply.addEventListener('click', function(ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const dateFrom = fFrom?.value || '';
+      const dateTo = fTo?.value || '';
+      refresh({ date_from: dateFrom, date_to: dateTo });
+    });
+  }
+  
+  if (fReset) {
+    fReset.addEventListener('click', function(ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      if (fFrom) fFrom.value = '';
+      if (fTo) fTo.value = '';
+      refresh({});
+    });
+  }
 
   refresh();
   setInterval(()=>refresh({}), 15000);
