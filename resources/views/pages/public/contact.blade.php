@@ -4,6 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Contact — {{ config('app.name') }}</title>
+    
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0078B7" />
+    <link rel="apple-touch-icon" href="/icon-192x192.png" />
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         :root{
@@ -44,6 +50,9 @@
     <footer>
         <x-public.public-footer />
     </footer>
+
+    {{-- Bouton PWA --}}
+    <x-public.pwa-button />
 
 </body>
 </html>
