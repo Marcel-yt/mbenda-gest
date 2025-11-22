@@ -7,20 +7,20 @@
     </div>
 
     <!-- Desktop links -->
-    <div class="hidden md:flex items-center space-x-4">
-      <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'font-semibold text-[#0078B7]' : 'text-gray-700 hover:text-[#0078B7]' }}">Accueil</a>
-      <a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'font-semibold text-[#0078B7]' : 'text-gray-700 hover:text-[#0078B7]' }}">À propos</a>
-      <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'font-semibold text-[#0078B7]' : 'text-gray-700 hover:text-[#0078B7]' }}">Contact</a>
+    <div class="hidden md:flex items-center space-x-6">
+      <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'font-semibold text-[#0078B7] border-b-2 border-[#0078B7] pb-1' : 'text-gray-700 hover:text-[#0078B7] transition-colors duration-200' }}">Accueil</a>
+      <a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'font-semibold text-[#0078B7] border-b-2 border-[#0078B7] pb-1' : 'text-gray-700 hover:text-[#0078B7] transition-colors duration-200' }}">À propos</a>
+      <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'font-semibold text-[#0078B7] border-b-2 border-[#0078B7] pb-1' : 'text-gray-700 hover:text-[#0078B7] transition-colors duration-200' }}">Contact</a>
     </div>
 
     <div class="hidden md:flex items-center">
-      <a href="{{ route('login') }}" class="ml-4 inline-flex items-center px-4 py-2 rounded-md text-sm font-medium text-white bg-[#0078B7] hover:bg-[#006aa0]">Connexion</a>
+      <a href="{{ route('login') }}" class="ml-4 inline-flex items-center px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-[#0078B7] hover:bg-[#006aa0] hover:shadow-lg transition-all duration-200 hover:scale-105">Connexion</a>
     </div>
 
     <!-- Mobile: hamburger -->
     <div class="md:hidden flex items-center">
       <button id="public-mobile-toggle" aria-expanded="false" aria-controls="public-nav-mobile"
-              class="p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none"
+              class="p-2 rounded-lg text-gray-600 hover:bg-blue-50 hover:text-[#0078B7] focus:outline-none transition-all duration-200"
               aria-label="Toggle navigation">
         <svg data-menu-icon="open" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
@@ -35,10 +35,10 @@
   <!-- Mobile menu (positionné sous le header fixe via CSS var) -->
   <div id="public-nav-mobile" class="md:hidden border-t bg-white hidden" style="position:fixed; left:0; right:0; z-index:45; top:var(--public-header-height,64px);">
     <div class="px-4 py-3 space-y-2">
-      <a href="{{ url('/') }}" class="block px-3 py-2 text-center rounded-md text-base {{ request()->is('/') ? 'font-semibold text-[#0078B7]' : 'text-gray-700 hover:text-[#0078B7]' }}">Accueil</a>
-      <a href="{{ route('about') }}" class="block px-3 py-2 text-center rounded-md text-base {{ request()->routeIs('about') ? 'font-semibold text-[#0078B7]' : 'text-gray-700 hover:text-[#0078B7]' }}">À propos</a>
-      <a href="{{ route('contact') }}" class="block px-3 py-2 text-center rounded-md text-base {{ request()->routeIs('contact') ? 'font-semibold text-[#0078B7]' : 'text-gray-700 hover:text-[#0078B7]' }}">Contact</a>
-      <a href="{{ route('login') }}" class="block w-full mt-2 text-center px-3 py-2 rounded-md text-white bg-[#0078B7]">Connexion</a>
+      <a href="{{ url('/') }}" class="block px-3 py-2 text-center rounded-lg text-base {{ request()->is('/') ? 'font-semibold text-[#0078B7] bg-blue-50' : 'text-gray-700 hover:text-[#0078B7] hover:bg-gray-50 transition-all duration-200' }}">Accueil</a>
+      <a href="{{ route('about') }}" class="block px-3 py-2 text-center rounded-lg text-base {{ request()->routeIs('about') ? 'font-semibold text-[#0078B7] bg-blue-50' : 'text-gray-700 hover:text-[#0078B7] hover:bg-gray-50 transition-all duration-200' }}">À propos</a>
+      <a href="{{ route('contact') }}" class="block px-3 py-2 text-center rounded-lg text-base {{ request()->routeIs('contact') ? 'font-semibold text-[#0078B7] bg-blue-50' : 'text-gray-700 hover:text-[#0078B7] hover:bg-gray-50 transition-all duration-200' }}">Contact</a>
+      <a href="{{ route('login') }}" class="block w-full mt-2 text-center px-4 py-2.5 rounded-lg text-white font-semibold bg-[#0078B7] hover:bg-[#006aa0] hover:shadow-lg transition-all duration-200">Connexion</a>
     </div>
   </div>
 </nav>
@@ -60,6 +60,17 @@
     const icoOpen  = btn.querySelector('[data-menu-icon="open"]');
     const icoClose = btn.querySelector('[data-menu-icon="close"]');
     let isOpen = false;
+
+    function updateHeaderHeight() {
+      if (nav) {
+        const height = nav.offsetHeight;
+        document.documentElement.style.setProperty('--public-header-height', height + 'px');
+      }
+    }
+
+    function setFixedHeader() {
+      updateHeaderHeight();
+    }
 
     function setMenu(open) {
       isOpen = open;

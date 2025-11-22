@@ -13,7 +13,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
         <!-- Step 1 -->
-        <article class="group bg-white border rounded-xl shadow-sm p-6">
+        <article class="group bg-white border rounded-xl shadow-sm p-6 transition-transform duration-300 will-change-transform hover:-translate-y-2 hover:shadow-2xl hover:z-10">
           <div class="relative">
             <div class="absolute -left-6 -top-6 w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold" style="background: var(--mb-primary); box-shadow: 0 6px 18px rgba(0,120,183,0.18);">1</div>
             <h3 class="text-lg font-semibold text-gray-900 pl-10">Inscription Simple</h3>
@@ -22,7 +22,7 @@
         </article>
 
         <!-- Step 2 -->
-        <article class="group bg-white border rounded-xl shadow-sm p-6">
+        <article class="group bg-white border rounded-xl shadow-sm p-6 transition-transform duration-300 will-change-transform hover:-translate-y-2 hover:shadow-2xl hover:z-10">
           <div class="relative">
             <div class="absolute -left-6 -top-6 w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold" style="background: var(--mb-primary); box-shadow: 0 6px 18px rgba(0,120,183,0.18);">2</div>
             <h3 class="text-lg font-semibold text-gray-900 pl-10">Définissez Votre Montant</h3>
@@ -31,7 +31,7 @@
         </article>
 
         <!-- Step 3 -->
-        <article class="group bg-white border rounded-xl shadow-sm p-6">
+        <article class="group bg-white border rounded-xl shadow-sm p-6 transition-transform duration-300 will-change-transform hover:-translate-y-2 hover:shadow-2xl hover:z-10">
           <div class="relative">
             <div class="absolute -left-6 -top-6 w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold" style="background: var(--mb-primary); box-shadow: 0 6px 18px rgba(0,120,183,0.18);">3</div>
             <h3 class="text-lg font-semibold text-gray-900 pl-10">Collecte Régulière</h3>
@@ -40,7 +40,7 @@
         </article>
 
         <!-- Step 4 -->
-        <article class="group bg-white border rounded-xl shadow-sm p-6">
+        <article class="group bg-white border rounded-xl shadow-sm p-6 transition-transform duration-300 will-change-transform hover:-translate-y-2 hover:shadow-2xl hover:z-10">
           <div class="relative">
             <div class="absolute -left-6 -top-6 w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold" style="background: var(--mb-primary); box-shadow: 0 6px 18px rgba(0,120,183,0.18);">4</div>
             <h3 class="text-lg font-semibold text-gray-900 pl-10">Récupérez Votre Argent</h3>
