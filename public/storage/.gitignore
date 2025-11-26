@@ -1,2 +1,10 @@
 *
 !.gitignore
+
+# Allow tracking specific uploaded folders (clients, payouts, users)
+!clients/
+!clients/**
+!payouts/
+!payouts/**
+!users/
+!users/**
