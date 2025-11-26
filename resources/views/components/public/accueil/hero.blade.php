@@ -8,7 +8,7 @@
       <div class="text-center lg:text-left">
 
         <h1 class="mt-6 text-4xl md:text-5xl lg:text-5xl font-extrabold leading-tight text-[var(--mb-primary)]">
-          Épargnez chaque,
+          Épargnez chaque jour,
           <span class="block text-[#7FBC47]">réalisez vos rêves demain</span>
         </h1>
 
