@@ -41,10 +41,40 @@
     </div>
   </div>
 
+  {{-- Paiements aujourd'hui (nouveau) --}}
+  @php
+    use App\Models\Payout;
+    $todayPayoutsCount = 0;
+    $todayPayoutsSum = 0;
+    try {
+      $today = now()->toDateString();
+      $todayPayouts = Payout::whereDate('created_at', $today)->where('paid_by_admin_id', auth()->id());
+      $todayPayoutsCount = $todayPayouts->count();
+      $todayPayoutsSum = (float) $todayPayouts->sum('amount_net');
+    } catch (\Throwable $e) {
+      // silence in view
+    }
+  @endphp
+
+  <div class="mt-4">
+    <div class="bg-white border rounded-xl p-5 flex items-center justify-between">
+      <div>
+        <div class="text-sm text-gray-500 uppercase">Paiements aujourd'hui</div>
+        <div class="mt-2 text-2xl font-bold text-gray-900">{{ $todayPayoutsCount }} paiement(s)</div>
+        <div class="text-xs text-gray-500 mt-1">Total: {{ number_format($todayPayoutsSum, 2, ',', ' ') }} XAF</div>
+      </div>
+      <div>
+        <a href="{{ route('agent.payouts.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-lg text-sm font-medium">
+          Voir les paiements
+        </a>
+      </div>
+    </div>
+  </div>
+
   {{-- Graphiques analytiques --}}
   <div class="grid gap-6 lg:grid-cols-3">
     {{-- Courbe évolution 30 jours --}}
-    <div class="bg-white border border-gray-200 rounded-2xl p-6 lg:col-span-2 shadow-sm hover:shadow-md transition-shadow">
+    <div class="bg-white border border-gray-200 rounded-2xl p-6 lg:col-span-2 shadow-sm hover:shadow-md transition-shadow min-w-0">
       <div class="flex items-start justify-between mb-6">
         <div>
           <h2 class="text-lg font-bold text-gray-900">Évolution des collectes</h2>
@@ -56,11 +86,13 @@
           </svg>
         </div>
       </div>
-      <div class="h-72"><canvas id="chartDaily"></canvas></div>
+      <div class="h-72 w-full max-w-full overflow-hidden">
+        <canvas id="chartDaily" class="w-full block" aria-hidden="true"></canvas>
+      </div>
     </div>
 
     {{-- Donut timing collectes --}}
-    <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+    <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow min-w-0">
       <div class="flex items-start justify-between mb-6">
         <div>
           <h2 class="text-lg font-bold text-gray-900">Ponctualité</h2>
@@ -72,7 +104,9 @@
           </svg>
         </div>
       </div>
-      <div class="h-72 flex items-center justify-center"><canvas id="chartTiming"></canvas></div>
+      <div class="h-72 w-full max-w-full overflow-hidden flex items-center justify-center">
+        <canvas id="chartTiming" class="w-full block max-w-[320px] mx-auto" aria-hidden="true"></canvas>
+      </div>
     </div>
   </div>
 

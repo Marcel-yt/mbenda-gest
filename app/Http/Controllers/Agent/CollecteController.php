@@ -74,6 +74,12 @@ class CollecteController extends Controller
                 ->with('error', 'Cette tontine a été payée. Il n\'est plus possible d\'enregistrer de nouvelles collectes.');
         }
 
+        // Bloquer si la tontine est annulée
+        if ($tontine && $tontine->status === 'cancelled') {
+            return redirect()->route('agent.tontines.show', $tontine->id)
+                ->with('error', 'Cette tontine est annulée ; il n\'est pas possible d\'ajouter de collectes.');
+        }
+
         return view('pages.app.agent.collectes.create', compact('tontine'));
     }
 
@@ -87,7 +93,8 @@ class CollecteController extends Controller
             'tontine_id' => 'required|exists:tontines,id',
             'notes' => 'nullable|string',
             'confirmed' => 'accepted',
-            'date' => 'nullable|date', // jour cliqué dans le calendrier
+            'date' => 'nullable|date', // (ignored) jour cliqué dans le calendrier
+            'days' => 'nullable|integer|min:1', // nombre de jours à collecter
         ]);
 
         $tontine = Tontine::findOrFail($data['tontine_id']);
@@ -98,22 +105,78 @@ class CollecteController extends Controller
                 ->with('error', 'Cette tontine a été payée. Il n\'est plus possible d\'enregistrer de nouvelles collectes.');
         }
 
-        $collecte = Collecte::create([
-            'tontine_id' => $tontine->id,
-            'client_id' => $tontine->client_id,
-            'agent_id' => $request->user()->id,
-            'notes' => $data['notes'] ?? null,
-            'for_date' => !empty($data['date']) ? \Illuminate\Support\Carbon::parse($data['date'])->toDateString() : null,
-        ]);
+        // Bloquer si la tontine est annulée
+        if ($tontine->status === 'cancelled') {
+            return redirect()->route('agent.collectes.index', ['tontine_id' => $tontine->id])
+                ->with('error', 'Cette tontine est annulée ; il n\'est pas possible d\'ajouter de collectes.');
+        }
 
-        // Incrément du total collecté
-        $tontine->increment('collected_total', $tontine->daily_amount);
+        // Determine number of days to collect (default 1)
+        $daysToCollect = isset($data['days']) ? (int) $data['days'] : 1;
 
-        // Mettre à jour le statut de la tontine
+        // Build existing collectes grouped by for_date to find next uncollected day
+        $existing = Collecte::where('tontine_id', $tontine->id)
+            ->get()
+            ->groupBy(function ($c) {
+                return !empty($c->for_date) ? \Illuminate\Support\Carbon::parse($c->for_date)->toDateString() : optional($c->created_at)->toDateString();
+            });
+
+        $start = \Illuminate\Support\Carbon::parse($tontine->start_date);
+        $totalDays = intval($tontine->duration_days ?: 31);
+
+        // find first uncollected date
+        $firstUncollected = null;
+        for ($i = 0; $i < $totalDays; $i++) {
+            $date = $start->copy()->addDays($i)->toDateString();
+            if (! $existing->has($date) || $existing->get($date)->isEmpty()) {
+                $firstUncollected = $date;
+                break;
+            }
+        }
+
+        if (! $firstUncollected) {
+            return redirect()->route('agent.collectes.index', ['tontine_id' => $tontine->id])
+                ->with('error', 'Aucune date restante à collecter pour cette tontine.');
+        }
+
+        // Cap daysToCollect to remaining days
+        $remaining = 0;
+        for ($i = 0; $i < $totalDays; $i++) {
+            $date = $start->copy()->addDays($i)->toDateString();
+            if (! $existing->has($date) || $existing->get($date)->isEmpty()) {
+                $remaining++;
+            }
+        }
+
+        $daysToCreate = min($daysToCollect, $remaining);
+
+        // Create collectes for daysToCreate starting from firstUncollected
+        $current = \Illuminate\Support\Carbon::parse($firstUncollected);
+        $createdCount = 0;
+        for ($j = 0; $j < $daysToCreate; $j++) {
+            $dateFor = $current->copy()->addDays($j)->toDateString();
+
+            // skip if already exists just in case
+            if ($existing->has($dateFor) && $existing->get($dateFor)->isNotEmpty()) continue;
+
+            Collecte::create([
+                'tontine_id' => $tontine->id,
+                'client_id' => $tontine->client_id,
+                'agent_id' => $request->user()->id,
+                'notes' => $data['notes'] ?? null,
+                'for_date' => $dateFor,
+            ]);
+
+            // increment collected total by daily_amount for each created collecte
+            $tontine->increment('collected_total', $tontine->daily_amount);
+            $createdCount++;
+        }
+
+        // Update status after creations
         $tontine->updateStatusAfterCollecte();
 
         return redirect()->route('agent.collectes.index', ['tontine_id' => $tontine->id])
-            ->with('success', 'Collecte enregistrée.');
+            ->with('success', $createdCount > 0 ? "{$createdCount} collecte(s) enregistrée(s)." : 'Aucune collecte enregistrée.');
     }
 
     /**

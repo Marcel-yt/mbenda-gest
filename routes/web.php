@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ClientController as AdminClientController;
 use App\Http\Controllers\Agent\TontineController as AgentTontineController;
 use App\Http\Controllers\Admin\TontineController as AdminTontineController;
 use App\Http\Controllers\Agent\CollecteController;
+use App\Http\Controllers\Agent\PayoutController as AgentPayoutController;
 use App\Http\Controllers\Admin\CollecteController as AdminCollecteController;
 use App\Http\Controllers\Admin\PayoutController as AdminPayoutController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -46,7 +47,7 @@ Route::middleware(['auth','verified','role:admin'])
 
         // Routes pour la gestion des tontines (admin uniquement)
         Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-            Route::resource('tontines', AdminTontineController::class);
+            Route::resource('tontines', AdminTontineController::class)->except(['edit']);
             Route::post('tontines/{tontine}/finalize', [AdminTontineController::class, 'finalize'])->name('tontines.finalize');
         });
 
@@ -62,6 +63,7 @@ Route::middleware(['auth','verified','role:agent'])
 
         // Routes pour la gestion des tontines (agent uniquement)
         Route::resource('tontines', AgentTontineController::class)->only(['index','create','store','show','edit','update']);
+        Route::post('tontines/{tontine}/cancel', [AgentTontineController::class, 'cancel'])->name('tontines.cancel');
 
         // AJAX search for clients used by agent tontine create/edit
         Route::get('tontines/clients/search', [AgentTontineController::class, 'searchClients'])
@@ -71,6 +73,13 @@ Route::middleware(['auth','verified','role:agent'])
         Route::resource('collectes', CollecteController::class)->only([
             'index', 'create', 'store', 'show'
         ]);
+
+        // Routes pour les paiements (agent)
+        Route::get('/payouts', [AgentPayoutController::class, 'index'])->name('payouts.index');
+        Route::get('/payouts/create/{tontine?}', [AgentPayoutController::class, 'create'])->name('payouts.create');
+        Route::post('/payouts', [AgentPayoutController::class, 'store'])->name('payouts.store');
+        Route::get('/payouts/{id}', [AgentPayoutController::class, 'show'])->name('payouts.show');
+        Route::get('/payouts/{id}/download', [AgentPayoutController::class, 'download'])->name('payouts.download');
 
         // Autres routes agent...
     });
@@ -97,13 +106,13 @@ Route::middleware(['auth'])->prefix('agent')->name('agent.')->group(function () 
     // AJAX search route...
 });
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    Route::resource('tontines', AdminTontineController::class);
-    Route::post('tontines/{tontine}/finalize', [AdminTontineController::class, 'finalize'])->name('tontines.finalize');
+    Route::resource('tontines', AdminTontineController::class)->except(['edit']);
+            Route::post('tontines/{tontine}/finalize', [AdminTontineController::class, 'finalize'])->name('tontines.finalize');
+            Route::post('tontines/{tontine}/cancel', [AdminTontineController::class, 'cancel'])->name('tontines.cancel');
 });
 Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
     Route::get('/tontines', [AdminTontineController::class, 'index'])->name('tontines.index');
     Route::get('/tontines/{id}', [AdminTontineController::class, 'show'])->name('tontines.show');
-    Route::get('/tontines/{id}/edit', [AdminTontineController::class, 'edit'])->name('tontines.edit');
     Route::put('/tontines/{id}', [AdminTontineController::class, 'update'])->name('tontines.update');
     Route::post('/tontines/{id}/pay', [AdminTontineController::class, 'pay'])->name('tontines.pay');
 

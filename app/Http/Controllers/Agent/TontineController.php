@@ -100,6 +100,37 @@ class TontineController extends Controller
     }
 
     /**
+     * Cancel (annuler) a tontine — only allowed when not paid.
+     */
+    public function cancel(Request $request, Tontine $tontine)
+    {
+        // only allow cancelling non-paid tontines
+        if ($tontine->status === 'paid') {
+            return redirect()->route('agent.tontines.show', $tontine->id)
+                ->with('error', 'Impossible d\'annuler une tontine déjà payée.');
+        }
+
+        if ($tontine->status === 'cancelled') {
+            return redirect()->route('agent.tontines.show', $tontine->id)
+                ->with('info', 'La tontine est déjà annulée.');
+        }
+
+        $data = $request->validate([
+            'cancel_reason' => 'nullable|string|max:1000',
+        ]);
+
+        // persist cancellation metadata
+        $tontine->status = 'cancelled';
+        $tontine->cancelled_by = $request->user()->id;
+        $tontine->cancelled_reason = $data['cancel_reason'] ?? null;
+        $tontine->cancelled_at = now();
+        $tontine->save();
+
+        return redirect()->route('agent.tontines.index')
+            ->with('success', 'Tontine annulée avec succès. Les collectes associées ne seront plus prises en compte dans les calculs.');
+    }
+
+    /**
      * AJAX: recherche de clients pour le select (nom / prénom / téléphone)
      */
     public function searchClients(Request $request)

@@ -46,7 +46,19 @@
             @endif
             {{ ucfirst($tontine->status) }}
           </span>
-          @if($tontine->status !== 'paid')
+          @if($tontine->status === 'cancelled')
+            <div class="ml-4 text-sm text-gray-600">
+              <div class="font-semibold text-sm text-red-700">Tontine annulée</div>
+              <div class="mt-1 text-xs text-gray-700">Annulée par : {{ $tontine->cancelledBy?->name ?? '—' }}</div>
+              @if(!empty($tontine->cancelled_reason))
+                <div class="mt-1 text-xs text-gray-700">Motif : <span class="font-medium">{{ $tontine->cancelled_reason }}</span></div>
+              @endif
+              @if(!empty($tontine->cancelled_at))
+                <div class="mt-1 text-xs text-gray-500">Le {{ $tontine->cancelled_at->format('d/m/Y H:i') }}</div>
+              @endif
+            </div>
+          @endif
+          @if(!in_array($tontine->status, ['paid','cancelled']))
             <button type="button"
                     class="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg text-sm font-medium hover:from-green-600 hover:to-green-700 transition-all shadow-sm"
                     onclick="handlePayoutClick()"
@@ -57,6 +69,7 @@
               Payer
             </button>
           @endif
+          {{-- admin cancel button removed from header — moved into info card below --}}
         </div>
       </div>
       {{-- Action Buttons --}}
@@ -69,14 +82,7 @@
           </svg>
           Retour
         </a>
-        <a href="{{ route('admin.tontines.edit', $tontine->id) }}" 
-           class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg text-sm font-medium hover:from-blue-600 hover:to-blue-700 transition-all shadow-sm"
-           title="Modifier cette tontine">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-          </svg>
-          Modifier
-        </a>
+        {{-- Edit action removed per request --}}
       </div>
     </div>
   </div>
@@ -213,6 +219,22 @@
           </div>
         </div>
       </div>
+        <!-- Cancel action (placed at bottom of tontine info card) -->
+        <div class="border-t border-gray-100 px-6 py-4 mb-6">
+          @if(!in_array($tontine->status, ['paid','cancelled']))
+            <form id="admin-cancel-tontine-form" action="{{ route('admin.tontines.cancel', $tontine->id) }}" method="POST" class="flex justify-end">
+              @csrf
+              <input type="hidden" name="cancel_reason" id="adminCancelReasonInput" value="">
+              <button type="button" onclick="openAdminCancelModal()" title="Annuler la tontine"
+                      class="inline-flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-all shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Annuler la tontine
+              </button>
+            </form>
+          @endif
+        </div>
     </div>
     {{-- Client Information Card --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -324,6 +346,43 @@
     </div>
   </div>
 </div>
+{{-- Admin cancel modal --}}
+<div id="adminCancelModal" class="fixed inset-0 z-50 hidden bg-black/40 p-4">
+  <div class="bg-white w-full max-w-md rounded-xl shadow-lg border p-6">
+    <h3 class="text-base font-semibold mb-2">Confirmer l'annulation</h3>
+    <p class="text-sm text-gray-600">Êtes-vous sûr de vouloir annuler cette tontine ? Les collectes déjà enregistrées ne seront plus prises en compte dans les calculs.</p>
+    <div class="mt-4">
+      <label for="adminCancelReason" class="text-sm text-gray-700">Motif (optionnel)</label>
+      <textarea id="adminCancelReason" rows="3" class="w-full mt-2 border border-gray-200 rounded p-2 text-sm" placeholder="Raison de l'annulation (facultatif)"></textarea>
+    </div>
+    <div class="mt-4 flex items-center gap-3">
+      <input id="adminConfirmCancelCheckbox" type="checkbox" class="h-4 w-4" onchange="onAdminCancelCheckboxChange(this)">
+      <label for="adminConfirmCancelCheckbox" class="text-sm text-gray-700">Je confirme vouloir annuler cette tontine</label>
+    </div>
+    <div class="mt-6 flex justify-end gap-2">
+      <button type="button" class="mb-btn-secondary px-4 py-2 rounded" onclick="closeAdminCancelModal()">Annuler</button>
+      <button id="adminConfirmCancelBtn" type="button" class="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white disabled:opacity-50" onclick="submitAdminCancel()" disabled>Annuler la tontine</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openAdminCancelModal(){ document.getElementById('adminCancelModal').classList.remove('hidden'); }
+function closeAdminCancelModal(){ const modal = document.getElementById('adminCancelModal'); if (modal) modal.classList.add('hidden'); const cb = document.getElementById('adminConfirmCancelCheckbox'); if (cb) cb.checked = false; onAdminCancelCheckboxChange(cb); const reason = document.getElementById('adminCancelReason'); if (reason) reason.value = ''; const hidden = document.getElementById('adminCancelReasonInput'); if (hidden) hidden.value = ''; }
+function onAdminCancelCheckboxChange(cb){
+  const btn = document.getElementById('adminConfirmCancelBtn');
+  if (!btn) return;
+  btn.disabled = !cb.checked;
+}
+function submitAdminCancel(){
+  const form = document.getElementById('admin-cancel-tontine-form');
+  if (!form) return;
+  const reasonVisible = document.getElementById('adminCancelReason');
+  const reasonInput = document.getElementById('adminCancelReasonInput');
+  if (reasonVisible && reasonInput) reasonInput.value = reasonVisible.value || '';
+  form.submit();
+}
+</script>
 
 {{-- Modals de vérification avant paiement (centrés) --}}
 <div id="payBlockedModal" class="fixed inset-0 z-50 hidden bg-black/40 p-4">

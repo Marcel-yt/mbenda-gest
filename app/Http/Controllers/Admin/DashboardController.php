@@ -89,11 +89,15 @@ class DashboardController extends Controller
     {
         $totalClients   = DB::table('clients')->count();
         $totalTontines  = DB::table('tontines')->count();
-        $totalCollectes = DB::table('collectes')->count();
+        $totalCollectes = DB::table('collectes as c')
+            ->join('tontines as t', 't.id', '=', 'c.tontine_id')
+            ->where('t.status', '<>', 'cancelled')
+            ->count();
         $totalPayouts   = DB::table('payouts')->count();
 
         $amountInTotal = (float) DB::table('collectes as c')
             ->join('tontines as t', 't.id', '=', 'c.tontine_id')
+            ->where('t.status', '<>', 'cancelled')
             ->sum('t.daily_amount');
 
         $amountOutTotal = (float) DB::table('payouts')->sum('amount_net');
@@ -147,7 +151,7 @@ class DashboardController extends Controller
     // In/Out/Net/Commission sur période; null=null => global
     private function ioBetween(?Carbon $from, ?Carbon $to): array
     {
-        $inQ = DB::table('collectes as c')->join('tontines as t', 't.id', '=', 'c.tontine_id');
+        $inQ = DB::table('collectes as c')->join('tontines as t', 't.id', '=', 'c.tontine_id')->where('t.status', '<>', 'cancelled');
         if ($from && $to) $inQ->whereBetween('c.created_at', [$from, $to]);
 
         $outQ = DB::table('payouts');
@@ -171,6 +175,7 @@ class DashboardController extends Controller
 
         $inByDay = DB::table('collectes as c')
             ->join('tontines as t', 't.id', '=', 'c.tontine_id')
+            ->where('t.status', '<>', 'cancelled')
             ->where('c.created_at', '>=', $startDay->toDateString())
             ->selectRaw('DATE(c.created_at) as d, SUM(t.daily_amount) as s')
             ->groupBy('d')->pluck('s', 'd');
@@ -196,6 +201,7 @@ class DashboardController extends Controller
 
         $inByMonth = DB::table('collectes as c')
             ->join('tontines as t', 't.id', '=', 'c.tontine_id')
+            ->where('t.status', '<>', 'cancelled')
             ->where('c.created_at', '>=', $startMonth->toDateString())
             ->selectRaw('DATE_FORMAT(c.created_at, "%Y-%m") as m, SUM(t.daily_amount) as s')
             ->groupBy('m')->pluck('s', 'm');
@@ -221,6 +227,7 @@ class DashboardController extends Controller
         $today = Carbon::today();
         $agentsToday = DB::table('collectes as c')
             ->join('tontines as t','t.id','=','c.tontine_id')
+            ->where('t.status', '<>', 'cancelled')
             ->leftJoin('users as u','u.id','=','c.agent_id')
             ->whereBetween('c.created_at', [$today->copy()->startOfDay(), $today->copy()->endOfDay()])
             ->groupBy('u.id','u.first_name','u.last_name','u.email')
@@ -231,6 +238,7 @@ class DashboardController extends Controller
         $mStart = Carbon::now()->startOfMonth();
         $agentsMonth = DB::table('collectes as c')
             ->join('tontines as t','t.id','=','c.tontine_id')
+            ->where('t.status', '<>', 'cancelled')
             ->leftJoin('users as u','u.id','=','c.agent_id')
             ->where('c.created_at','>=',$mStart)
             ->groupBy('u.id','u.first_name','u.last_name','u.email')

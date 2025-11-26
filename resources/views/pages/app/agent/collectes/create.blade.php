@@ -123,6 +123,20 @@
             </div>
 
             <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg bg-yellow-100 flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3"/>
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <label class="block text-xs text-gray-500 uppercase tracking-wider">Combien de jours souhaitez-vous collecter ?</label>
+                <input type="number" id="collect_days" name="days" min="1" value="1" class="mt-1 mb-input w-40" />
+                <p class="text-xs text-gray-500 mt-1">Le montant total sera calculé comme <strong>jours × montant journalier</strong>.</p>
+                <p class="mt-2 text-sm font-semibold" id="collect_total_display">Total estimé: <span id="total_value">0</span> {{ $tontine->settings['currency'] ?? 'XAF' }}</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
               <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
                 <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
@@ -310,6 +324,24 @@
       // toggle on change
       checkbox && checkbox.addEventListener('change', updateSubmitState);
     });
+  })();
+</script>
+<script>
+  (function () {
+    // compute total = days * daily_amount
+    const daysInput = document.getElementById('collect_days');
+    const totalValue = document.getElementById('total_value');
+    const dailyAmount = {{ $tontine ? (int)$tontine->daily_amount : 0 }};
+
+    function updateTotal() {
+      if (!daysInput || !totalValue) return;
+      const days = Math.max(1, parseInt(daysInput.value || '1', 10));
+      const total = days * dailyAmount;
+      totalValue.textContent = new Intl.NumberFormat().format(total);
+    }
+
+    updateTotal();
+    daysInput && daysInput.addEventListener('input', updateTotal);
   })();
 </script>
 @endsection

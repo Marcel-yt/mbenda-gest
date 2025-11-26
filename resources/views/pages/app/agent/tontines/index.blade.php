@@ -69,6 +69,7 @@
             <option value="active"    @selected(($status ?? '')==='active')>Actif</option>
             <option value="completed" @selected(($status ?? '')==='completed')>Terminée</option>
             <option value="paid"      @selected(($status ?? '')==='paid')>Payée</option>
+              <option value="cancelled" @selected(($status ?? '')==='cancelled')>Annulée</option>
           </select>
         </div>
       </div>
@@ -143,15 +144,17 @@
               </td>
               <td class="px-6 py-4 text-right whitespace-nowrap">
                 <div class="inline-flex items-center gap-2">
-                  <a href="{{ route('agent.collectes.index', ['tontine_id' => $t->id]) }}"
-                     class="mb-btn-primary inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="9"/>
-                      <path d="M10.5 9.5c.6-.4 1.3-.6 1.99-.6 1.66 0 3 1.34 3 3s-1.34 3-3 3c-.69 0-1.39-.22-1.99-.6"/>
-                      <path d="M12 8v1.5M12 14.5V16"/>
-                    </svg>
-                    <span>Collecter</span>
-                  </a>
+                  @if($t->status !== 'cancelled')
+                    <a href="{{ route('agent.collectes.index', ['tontine_id' => $t->id]) }}"
+                       class="mb-btn-primary inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium">
+                      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="9"/>
+                        <path d="M10.5 9.5c.6-.4 1.3-.6 1.99-.6 1.66 0 3 1.34 3 3s-1.34 3-3 3c-.69 0-1.39-.22-1.99-.6"/>
+                        <path d="M12 8v1.5M12 14.5V16"/>
+                      </svg>
+                      <span>Collecter</span>
+                    </a>
+                  @endif
                   <a href="{{ route('agent.tontines.show', $t) }}"
                      class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-white border border-gray-200 text-gray-700 hover:bg-gray-50">
                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

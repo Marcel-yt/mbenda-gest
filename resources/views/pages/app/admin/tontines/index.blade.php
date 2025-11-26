@@ -112,6 +112,7 @@
             <option value="active" @selected(($status ?? request('status'))==='active')>Actif</option>
             <option value="completed" @selected(($status ?? request('status'))==='completed')>Terminée</option>
             <option value="paid" @selected(($status ?? request('status'))==='paid')>Payée</option>
+            <option value="cancelled" @selected(($status ?? request('status'))==='cancelled')>Annulée</option>
           </select>
         </div>
         
@@ -159,7 +160,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
             @php
-              $statusLabels = ['draft' => 'Brouillon', 'active' => 'Actif', 'completed' => 'Terminée', 'paid' => 'Payée'];
+              $statusLabels = ['draft' => 'Brouillon', 'active' => 'Actif', 'completed' => 'Terminée', 'paid' => 'Payée', 'cancelled' => 'Annulée'];
             @endphp
             {{ $statusLabels[request('status')] ?? request('status') }}
           </span>
@@ -289,14 +290,7 @@
                     <span>Voir</span>
                     <span class="absolute -top-8 right-0 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Détails</span>
                   </a>
-                  <a href="{{ route('admin.tontines.edit', $t->id) }}" 
-                     class="group relative inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-gradient-to-br from-yellow-50 to-orange-100 text-yellow-700 hover:from-yellow-100 hover:to-orange-200 transition-all duration-200 shadow-sm hover:shadow font-medium text-xs">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                    </svg>
-                    <span>Modifier</span>
-                    <span class="absolute -top-8 right-0 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Éditer</span>
-                  </a>
+                  {{-- Edit action removed: editing moved to admin workflow outside UI --}}
                 </div>
               </td>
             </tr>

@@ -113,9 +113,14 @@
               $bg    = $items->isNotEmpty() ? "linear-gradient(135deg, #{$hex}15 0%, #{$hex}25 100%)" : '#f9fafb';
               $bd    = $items->isNotEmpty() ? "#{$hex}" : '#e5e7eb';
               $isPaid = $tontine->status === 'paid';
-              $href  = $items->isNotEmpty()
-                  ? route('agent.collectes.show', $last?->id)
-                  : ($isPaid ? '#' : route('agent.collectes.create', ['tontine_id' => $tontine->id, 'date' => $d['date']]));
+                  // If the day already has collectes, open the show page for the last collecte;
+                  // otherwise open the create page. If tontine is paid and no collecte exists,
+                  // keep behavior that prevents creating (href="#" with alert handled later).
+                  if ($items->isNotEmpty()) {
+                    $href = route('agent.collectes.show', $last?->id);
+                  } else {
+                    $href = $isPaid ? '#' : route('agent.collectes.create', ['tontine_id' => $tontine->id, 'date' => $d['date']]);
+                  }
               $isToday = $d['is_today'] ?? \Illuminate\Support\Carbon::parse($d['date'])->isToday();
           @endphp
 

@@ -65,7 +65,9 @@ class TontineController extends Controller
     {
         $tontine = Tontine::with(['client'])->findOrFail($id);
 
-        return view('pages.app.admin.tontines.edit', compact('tontine'));
+        // Edition page removed — redirect to show with info
+        return redirect()->route('admin.tontines.show', $tontine->id)
+            ->with('info', 'La modification des tontines n\'est plus disponible via cette interface.');
     }
 
     public function update(Request $request, int $id)
@@ -112,5 +114,36 @@ class TontineController extends Controller
 
         return redirect()->route('admin.tontines.show', $tontine->id)
             ->with('success', 'Statut passé à paid.');
+    }
+
+    /**
+     * Cancel (annuler) a tontine — only allowed when not paid.
+     */
+    public function cancel(Request $request, int $id)
+    {
+        $tontine = Tontine::findOrFail($id);
+
+        if ($tontine->status === 'paid') {
+            return redirect()->route('admin.tontines.show', $tontine->id)
+                ->with('error', 'Impossible d\'annuler une tontine déjà payée.');
+        }
+
+        if ($tontine->status === 'cancelled') {
+            return redirect()->route('admin.tontines.show', $tontine->id)
+                ->with('info', 'La tontine est déjà annulée.');
+        }
+
+        $data = $request->validate([
+            'cancel_reason' => 'nullable|string|max:1000',
+        ]);
+
+        $tontine->status = 'cancelled';
+        $tontine->cancelled_by = $request->user()->id;
+        $tontine->cancelled_reason = $data['cancel_reason'] ?? null;
+        $tontine->cancelled_at = now();
+        $tontine->save();
+
+        return redirect()->route('admin.tontines.index')
+            ->with('success', 'Tontine annulée avec succès. Les collectes associées ne seront plus prises en compte dans les calculs.');
     }
 }

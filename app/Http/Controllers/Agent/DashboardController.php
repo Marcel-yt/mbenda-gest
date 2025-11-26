@@ -32,6 +32,7 @@ class DashboardController extends Controller
         $todayAmount = (float) Collecte::where('agent_id', $agentId)
             ->whereDate('collectes.created_at', $today)
             ->join('tontines', 'tontines.id', '=', 'collectes.tontine_id')
+            ->where('tontines.status', '<>', 'cancelled')
             ->sum('tontines.daily_amount');
 
         // Total des tontines actives (toutes)
@@ -49,6 +50,11 @@ class DashboardController extends Controller
             ])
             ->orderByDesc('id')
             ->get();
+
+        // Exclude collectes whose tontine has been cancelled
+        $collectesActionToday = $collectesActionToday->filter(function($c){
+            return optional($c->tontine)->status !== 'cancelled';
+        })->values();
 
         // Table clients (adresse + dernière date/heure + nb collectes du jour)
         $clientDailyStats = $collectesActionToday
@@ -80,6 +86,7 @@ class DashboardController extends Controller
             ->where('collectes.agent_id', $agentId)
             ->whereDate('collectes.created_at', '>=', $from30)
             ->join('tontines', 'tontines.id', '=', 'collectes.tontine_id')
+            ->where('tontines.status', '<>', 'cancelled')
             ->groupBy('d')
             ->orderBy('d')
             ->get()
@@ -96,7 +103,8 @@ class DashboardController extends Controller
 
         // Donut: Collectes du jour (À l’heure / En avance / En retard) basées sur for_date
         $hasForDate = Schema::hasColumn('collectes', 'for_date');
-        $base = Collecte::where('agent_id', $agentId)->whereDate('created_at', $today);
+        $base = Collecte::where('agent_id', $agentId)->whereDate('created_at', $today)
+            ->whereHas('tontine', fn($q) => $q->where('status', '<>', 'cancelled'));
 
         if ($hasForDate) {
             $onTime = (int) (clone $base)->whereDate('for_date', '=', $today)->count();

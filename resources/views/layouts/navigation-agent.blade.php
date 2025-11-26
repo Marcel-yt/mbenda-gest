@@ -49,6 +49,22 @@
         <svg class="w-4 h-4 ml-auto flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
       @endif
     </a>
+
+    <a href="{{ route('agent.payouts.index') }}"
+       class="group w-full text-sm font-medium flex items-center gap-3 px-5 py-3 transition-all duration-200
+       {{ request()->routeIs('agent.payouts.*') ? 'bg-[var(--mb-secondary,#7FBC47)] text-white shadow-sm border-l-4 border-[var(--mb-tertiary)]' : 'text-white/80 hover:bg-white/10 hover:text-white hover:border-l-4 hover:border-white/20 border-l-4 border-transparent' }}">
+      <svg class="w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 1v4" />
+        <path d="M12 19v4" />
+        <path d="M3 12h4" />
+        <path d="M17 12h4" />
+        <circle cx="12" cy="12" r="3" />
+      </svg>
+      <span class="leading-tight">Paiements</span>
+      @if(request()->routeIs('agent.payouts.*'))
+        <svg class="w-4 h-4 ml-auto flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+      @endif
+    </a>
   </nav>
 
   {{-- Footer avec info utilisateur --}}

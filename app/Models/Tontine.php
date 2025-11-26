@@ -23,6 +23,9 @@ class Tontine extends Model
         'expected_end_date',
         'actual_end_date',
         'status',
+        'cancelled_by',
+        'cancelled_reason',
+        'cancelled_at',
         'allow_early_payout',
         'commission_days',
         'collected_total',
@@ -37,11 +40,15 @@ class Tontine extends Model
         'start_date' => 'date',
         'expected_end_date' => 'date',
         'actual_end_date' => 'date',
+        'cancelled_at' => 'datetime',
         // ajoute si les colonnes existent en DB:
         // 'completed_at' => 'datetime',
         // 'paid_at' => 'datetime',
         // 'archived_at' => 'datetime',
     ];
+
+    
+
 
     // relations
     public function client()
@@ -52,6 +59,11 @@ class Tontine extends Model
     public function creator()
     {
         return $this->belongsTo(\App\Models\User::class, 'created_by_agent_id');
+    }
+
+    public function cancelledBy()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'cancelled_by');
     }
 
     /*
