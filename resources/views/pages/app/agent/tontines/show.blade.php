@@ -261,22 +261,7 @@
           </div>
           </div>
 
-        <!-- Cancel action (placed at bottom of tontine info card) -->
-        <div class="border-t border-gray-100 px-6 py-4 mb-6">
-          @if(!in_array($tontine->status, ['paid','cancelled']))
-            <form id="cancel-tontine-form" action="{{ route('agent.tontines.cancel', $tontine->id) }}" method="POST" class="flex justify-end">
-              @csrf
-              <input type="hidden" name="cancel_reason" id="cancelReasonInput" value="">
-              <button type="button" onclick="openCancelModal()" title="Annuler la tontine"
-                      class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-all shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                Annuler la tontine
-              </button>
-            </form>
-          @endif
-        </div>
+        <!-- Cancel action removed for agents: only admins may cancel tontines -->
           </div>
         </div>
 
@@ -443,42 +428,5 @@
     };
   })();
 </script>
-{{-- Cancel confirmation modal --}}
-<div id="cancelModal" class="fixed inset-0 z-50 hidden bg-black/40 p-4">
-  <div class="bg-white w-full max-w-md rounded-xl shadow-lg border p-6">
-    <h3 class="text-base font-semibold mb-2">Confirmer l'annulation</h3>
-    <p class="text-sm text-gray-600">Êtes-vous sûr de vouloir annuler cette tontine ? Les collectes déjà enregistrées ne seront plus prises en compte dans les calculs.</p>
-    <div class="mt-4">
-      <label for="cancelReason" class="text-sm text-gray-700">Motif (optionnel)</label>
-      <textarea id="cancelReason" rows="3" class="w-full mt-2 border border-gray-200 rounded p-2 text-sm" placeholder="Raison de l'annulation (facultatif)"></textarea>
-    </div>
-    <div class="mt-4 flex items-center gap-3">
-      <input id="confirmCancelCheckbox" type="checkbox" class="h-4 w-4" onchange="onCancelCheckboxChange(this)">
-      <label for="confirmCancelCheckbox" class="text-sm text-gray-700">Je confirme vouloir annuler cette tontine</label>
-    </div>
-    <div class="mt-6 flex justify-end gap-2">
-      <button type="button" class="mb-btn-secondary px-4 py-2 rounded" onclick="closeCancelModal()">Annuler</button>
-      <button id="confirmCancelBtn" type="button" class="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white disabled:opacity-50" onclick="submitCancel()" disabled>Annuler la tontine</button>
-    </div>
-  </div>
-</div>
-
-<script>
-function openCancelModal(){ document.getElementById('cancelModal').classList.remove('hidden'); }
-function closeCancelModal(){ const modal = document.getElementById('cancelModal'); if (modal) modal.classList.add('hidden'); const cb = document.getElementById('confirmCancelCheckbox'); if (cb) cb.checked = false; onCancelCheckboxChange(cb); const reason = document.getElementById('cancelReason'); if (reason) reason.value = ''; const hidden = document.getElementById('cancelReasonInput'); if (hidden) hidden.value = ''; }
-function onCancelCheckboxChange(cb){
-  const btn = document.getElementById('confirmCancelBtn');
-  if (!btn) return;
-  btn.disabled = !cb.checked;
-}
-function submitCancel(){
-  const form = document.getElementById('cancel-tontine-form');
-  if (!form) return;
-  // copy visible reason into hidden input so it's submitted
-  const reasonVisible = document.getElementById('cancelReason');
-  const reasonInput = document.getElementById('cancelReasonInput');
-  if (reasonVisible && reasonInput) reasonInput.value = reasonVisible.value || '';
-  form.submit();
-}
-</script>
+<!-- Cancel functionality removed from agent view: admin-only behavior retained elsewhere -->
 @endsection
