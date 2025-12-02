@@ -66,8 +66,10 @@
     </div>
   </div>
 
+  <!-- Commission prévue moved inside KPI grid for consistent layout -->
+
   {{-- KPIs montants avec couleurs et icônes --}}
-  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
     <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
       <div class="flex items-center gap-2 text-xs text-gray-500 font-medium mb-1">
         <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path></svg>
@@ -95,6 +97,13 @@
         Commissions (Total)
       </div>
       <div class="mt-2 text-2xl font-bold text-purple-600" id="kpi-comm-total">{{ number_format($commissionTotal ?? 0,2) }} <span class="text-sm text-gray-500">XAF</span></div>
+    </div>
+    <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex items-center gap-2 text-xs text-amber-600 font-medium mb-1">
+        <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2"></path></svg>
+        Commissions prévues (Total)
+      </div>
+      <div class="mt-2 text-2xl font-bold text-amber-600" id="kpi-comm-planned">{{ number_format($commissionPlanned ?? 0,2) }} <span class="text-sm text-gray-500">XAF</span></div>
     </div>
   </div>
 

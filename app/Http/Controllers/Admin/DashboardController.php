@@ -28,6 +28,7 @@ class DashboardController extends Controller
             'amountOutTotal' => $totals['amountOutTotal'],
             'netTotal'       => $totals['netTotal'],
             'commissionTotal'=> $totals['commissionTotal'],
+            'commissionPlanned'=> $totals['commissionPlanned'],
 
             'periods'        => $totals['periods'],
 
@@ -102,6 +103,12 @@ class DashboardController extends Controller
 
         $amountOutTotal = (float) DB::table('payouts')->sum('amount_net');
         $commissionTotal= (float) DB::table('payouts')->sum('commission_amount');
+        // Commission prévue: somme des commissions attendues sur les tontines commencées
+        // Par tontine: daily_amount * COALESCE(commission_days, 0)
+        $commissionPlanned = (float) DB::table('tontines')
+            ->whereNotIn('status', ['draft','cancelled'])
+            ->selectRaw('SUM(COALESCE(daily_amount,0) * COALESCE(commission_days,0)) as s')
+            ->value('s') ?? 0.0;
         $netTotal       = $amountInTotal - $amountOutTotal;
 
         $now = Carbon::now();
@@ -140,6 +147,7 @@ class DashboardController extends Controller
             'amountInTotal',
             'amountOutTotal',
             'commissionTotal',
+            'commissionPlanned',
             'netTotal',
             'periods',
             'newClientsMonth',
