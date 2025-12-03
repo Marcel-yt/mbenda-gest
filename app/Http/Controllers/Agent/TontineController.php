@@ -140,14 +140,19 @@ class TontineController extends Controller
         if (strlen($q) < 1) {
             return response()->json([], 200);
         }
-
+        // case-insensitive search: match first_name, last_name, phone or full name (first + last)
+        $qLower = mb_strtolower($q);
         $items = Client::query()
-            ->where(function ($query) use ($q) {
-                $query->where('first_name', 'like', "%{$q}%")
-                      ->orWhere('last_name', 'like', "%{$q}%")
-                      ->orWhere('phone', 'like', "%{$q}%");
+            ->where(function ($query) use ($qLower, $q) {
+                // use LOWER(...) for case-insensitive matching regardless of DB collation
+                $query->whereRaw('LOWER(first_name) LIKE ?', ["%{$qLower}%"])
+                      ->orWhereRaw('LOWER(last_name) LIKE ?', ["%{$qLower}%"])
+                      ->orWhere('phone', 'like', "%{$q}%")
+                      ->orWhereRaw("LOWER(CONCAT(COALESCE(first_name,'') , ' ' , COALESCE(last_name,''))) LIKE ?", ["%{$qLower}%"]);
             })
-            ->limit(10)
+            ->orderBy('last_name')
+            ->orderBy('first_name')
+            ->limit(50)
             ->get(['id','first_name','last_name','phone'])
             ->map(function ($c) {
                 $label = trim(($c->first_name ?? '') . ' ' . ($c->last_name ?? ''));

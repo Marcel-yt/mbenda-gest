@@ -69,11 +69,11 @@
     @csrf
 
     <!-- Client Selection Section -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible">
       <div class="px-6 py-4" style="background: linear-gradient(135deg, var(--mb-primary) 0%, #005f8d 100%);">
         <h2 class="text-lg font-semibold text-white">Sélection du client</h2>
       </div>
-      <div class="p-6">
+      <div class="p-6 overflow-visible">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">
             Client <span class="text-red-500">*</span>
@@ -93,7 +93,7 @@
               </svg>
             </button>
             <input id="client_id" type="hidden" name="client_id" value="{{ old('client_id','') }}" />
-            <ul id="client_suggestions" class="z-50 absolute left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-52 overflow-auto hidden">
+            <ul id="client_suggestions" class="z-50 absolute left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-80 overflow-auto hidden">
               <!-- suggestions injected here -->
             </ul>
           </div>

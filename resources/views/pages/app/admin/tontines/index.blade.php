@@ -8,12 +8,12 @@
 
 <div class="space-y-6">
   {{-- En-tête avec statistiques --}}
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
     <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
       <div class="flex items-center justify-between">
         <div>
           <p class="text-xs font-medium text-blue-600 uppercase tracking-wide mb-1">Total Tontines</p>
-          <p class="text-3xl font-bold text-blue-900">{{ $tontines->total() }}</p>
+          <p class="text-3xl font-bold text-blue-900">{{ number_format($totalCount ?? $tontines->total(), 0, ',', ' ') }}</p>
         </div>
         <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-sm">
           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -27,7 +27,7 @@
       <div class="flex items-center justify-between">
         <div>
           <p class="text-xs font-medium text-green-600 uppercase tracking-wide mb-1">Actives</p>
-          <p class="text-3xl font-bold text-green-900">{{ $tontines->where('status', 'active')->count() }}</p>
+          <p class="text-3xl font-bold text-green-900">{{ number_format($activeCount ?? ($tontines->where('status', 'active')->count()), 0, ',', ' ') }}</p>
         </div>
         <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center shadow-sm">
           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -41,7 +41,7 @@
       <div class="flex items-center justify-between">
         <div>
           <p class="text-xs font-medium text-purple-600 uppercase tracking-wide mb-1">Terminées</p>
-          <p class="text-3xl font-bold text-purple-900">{{ $tontines->where('status', 'completed')->count() }}</p>
+          <p class="text-3xl font-bold text-purple-900">{{ number_format($completedCount ?? ($tontines->where('status', 'completed')->count()), 0, ',', ' ') }}</p>
         </div>
         <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center shadow-sm">
           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -55,11 +55,41 @@
       <div class="flex items-center justify-between">
         <div>
           <p class="text-xs font-medium text-orange-600 uppercase tracking-wide mb-1">Brouillons</p>
-          <p class="text-3xl font-bold text-orange-900">{{ $tontines->where('status', 'draft')->count() }}</p>
+          <p class="text-3xl font-bold text-orange-900">{{ number_format($draftCount ?? ($tontines->where('status', 'draft')->count()), 0, ',', ' ') }}</p>
         </div>
         <div class="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-full flex items-center justify-center shadow-sm">
           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    {{-- Payées --}}
+    <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-indigo-600 uppercase tracking-wide mb-1">Payées</p>
+          <p class="text-3xl font-bold text-indigo-900">{{ number_format($paidCount ?? 0, 0, ',', ' ') }}</p>
+        </div>
+        <div class="w-12 h-12 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-full flex items-center justify-center shadow-sm">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    {{-- Annulées --}}
+    <div class="bg-gradient-to-br from-rose-50 to-rose-100 border border-rose-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-rose-600 uppercase tracking-wide mb-1">Annulées</p>
+          <p class="text-3xl font-bold text-rose-900">{{ number_format($cancelledCount ?? 0, 0, ',', ' ') }}</p>
+        </div>
+        <div class="w-12 h-12 bg-gradient-to-br from-rose-400 to-rose-600 rounded-full flex items-center justify-center shadow-sm">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
           </svg>
         </div>
       </div>

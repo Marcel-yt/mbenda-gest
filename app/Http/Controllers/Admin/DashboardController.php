@@ -14,6 +14,7 @@ class DashboardController extends Controller
         $totals = $this->computeTotals();
         $series = $this->computeSeries();
         $agents = $this->computeAgents();
+        $agentCommissions = $this->computeAgentCommissions();
         $status = $this->computeStatusCounts();
 
         // Par défaut, aucun filtre => totaux globaux (pour la carte filtre)
@@ -48,6 +49,7 @@ class DashboardController extends Controller
 
             'statusCounts'   => $status,
             'filterTotals'   => $filterTotals,
+            'agentCommissions' => $agentCommissions,
         ]);
     }
 
@@ -57,6 +59,7 @@ class DashboardController extends Controller
         $series = $this->computeSeries();
         $agents = $this->computeAgents();
         $status = $this->computeStatusCounts();
+        $agentCommissions = $this->computeAgentCommissions();
 
         // Filtres facultatifs
         $from = $request->query('date_from') ? Carbon::createFromFormat('Y-m-d', $request->query('date_from'))->startOfDay() : null;
@@ -83,6 +86,7 @@ class DashboardController extends Controller
                 'from' => $from?->toDateString(),
                 'to'   => $to?->toDateString(),
             ]),
+            'agentCommissions' => $agentCommissions,
         ]));
     }
 
@@ -268,5 +272,44 @@ class DashboardController extends Controller
         $all = ['draft'=>0,'active'=>0,'completed'=>0,'paid'=>0,'archived'=>0,'cancelled'=>0];
         foreach ($all as $k=>$_) $all[$k] = (int)($raw[$k] ?? 0);
         return $all;
+    }
+
+    /**
+     * Compute per-agent commission summaries.
+     * - planned: sum(daily_amount * commission_days) for tontines created by the agent (exclude draft/cancelled)
+     * - real: sum(payouts.commission_amount) for payouts belonging to tontines created by the agent
+     *
+     * Returns array of ['id'=>..., 'name'=>..., 'email'=>..., 'planned'=>float, 'real'=>float]
+     */
+    private function computeAgentCommissions(): array
+    {
+        $plannedQ = DB::table('tontines')
+            ->whereRaw("status NOT IN ('draft','cancelled')")
+            ->selectRaw("created_by_agent_id as agent_id, SUM(COALESCE(daily_amount,0) * COALESCE(commission_days,0)) as planned")
+            ->groupBy('created_by_agent_id');
+
+        $realQ = DB::table('payouts')
+            ->join('tontines', 'payouts.tontine_id', '=', 'tontines.id')
+            ->selectRaw('tontines.created_by_agent_id as agent_id, SUM(payouts.commission_amount) as real_comm')
+            ->groupBy('tontines.created_by_agent_id');
+
+        $users = DB::table('users')
+            ->whereRaw("users.role = 'agent'")
+            ->leftJoinSub($plannedQ, 'p', 'users.id', '=', 'p.agent_id')
+            ->leftJoinSub($realQ, 'r', 'users.id', '=', 'r.agent_id')
+            ->selectRaw("users.id, COALESCE(users.first_name,'') as first_name, COALESCE(users.last_name,'') as last_name, users.email, COALESCE(p.planned,0) as planned, COALESCE(r.real_comm,0) as real_amount")
+            ->orderByDesc('planned')
+            ->get()
+            ->map(function ($u) {
+                return [
+                    'id' => $u->id,
+                    'name' => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')) ?: ($u->email ?? ''),
+                    'email' => $u->email,
+                    'planned' => (float) $u->planned,
+                    'real' => (float) ($u->real_amount ?? 0),
+                ];
+            })->toArray();
+
+        return $users;
     }
 }

@@ -5,7 +5,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name', 'Mbenda Gest') }}</title>
+        <meta name="description" content="@yield('meta_description', 'Solution d\'épargne quotidienne simple et sécurisée')">
+        <meta property="og:site_name" content="{{ config('app.name') }}">
+        <meta property="og:title" content="@yield('og_title', config('app.name'))">
+        <meta property="og:description" content="@yield('og_description', 'Solution d\'épargne quotidienne simple et sécurisée')">
+        <meta property="og:image" content="{{ asset('icon-192x192.png') }}">
+        <link rel="icon" type="image/png" href="{{ asset('icon-192x192.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('icon-192x192.png') }}">
+        <link rel="canonical" href="{{ url()->current() }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

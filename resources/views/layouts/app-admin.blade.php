@@ -4,6 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', config('app.name', 'Mbenda Gest'))</title>
+    <meta name="description" content="@yield('meta_description', 'Solution d\'épargne quotidienne simple et sécurisée')">
+    <meta property="og:site_name" content="{{ config('app.name') }}">
+    <meta property="og:title" content="@yield('og_title', config('app.name'))">
+    <meta property="og:description" content="@yield('og_description', 'Solution d\'épargne quotidienne simple et sécurisée')">
+    <meta property="og:image" content="{{ asset('icon-192x192.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('icon-192x192.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('icon-192x192.png') }}">
+    <link rel="canonical" href="{{ url()->current() }}">
     <style>
       :root { --mb-primary:#0078B7; --mb-secondary:#7FBC47; --mb-tertiary:#F7A52C; }
     </style>

@@ -4,6 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{{ config('app.name', 'Mbenda Gest') }}</title>
+    <meta name="description" content="Mbenda Gest — solution d'épargne quotidienne simple et sécurisée au Gabon. Rejoignez nos tontines pour épargner facilement et en confiance.">
+    <meta property="og:site_name" content="{{ config('app.name') }}">
+    <meta property="og:title" content="{{ config('app.name') }} - Épargne quotidienne">
+    <meta property="og:description" content="Mbenda Gest — solution d'épargne quotidienne simple et sécurisée au Gabon. Rejoignez nos tontines pour épargner facilement et en confiance.">
+    <meta property="og:image" content="{{ asset('icon-192x192.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('icon-192x192.png') }}">
+    <link rel="canonical" href="{{ url()->current() }}">
 
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json" />

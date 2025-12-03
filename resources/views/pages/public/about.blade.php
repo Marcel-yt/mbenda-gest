@@ -4,6 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{{ config('app.name', 'Mbenda Gest') }} - À propos</title>
+    <meta name="description" content="À propos de Mbenda Gest — notre mission, nos valeurs et notre parcours pour faciliter l'épargne quotidienne au Gabon.">
+    <meta property="og:site_name" content="{{ config('app.name') }}">
+    <meta property="og:title" content="À propos — {{ config('app.name') }}">
+    <meta property="og:description" content="À propos de Mbenda Gest — notre mission, nos valeurs et notre parcours pour faciliter l'épargne quotidienne au Gabon.">
+    <meta property="og:image" content="{{ asset('icon-192x192.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('icon-192x192.png') }}">
+    <link rel="canonical" href="{{ url()->current() }}">
     
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json" />

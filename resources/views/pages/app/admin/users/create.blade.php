@@ -182,10 +182,10 @@
           <select id="role" name="role" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" required>
             <option value="">Sélectionner un rôle</option>
             @if(!empty($auth) && $auth->is_super_admin)
-              <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>🔵 Admin</option>
-              <option value="agent" {{ old('role') === 'agent' ? 'selected' : '' }}>🟢 Agent</option>
+              <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>🔑 Admin</option>
+              <option value="agent" {{ old('role') === 'agent' ? 'selected' : '' }}>👤 Agent</option>
             @else
-              <option value="agent" selected>🟢 Agent</option>
+              <option value="agent" selected>👤 Agent</option>
             @endif
           </select>
           @error('role') <p class="mt-1 text-xs text-red-600 flex items-center gap-1">
@@ -240,7 +240,8 @@
 
       <div class="border-t border-gray-100 my-6"></div>
 
-      {{-- Photo Upload --}}
+      {{-- Photo Upload (désactivée) --}}
+      {{--
       <div>
         <label for="photo_profil" class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
           <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -274,6 +275,7 @@
           {{ $message }}
         </p> @enderror
       </div>
+      --}}
 
       <div class="border-t border-gray-100 my-6"></div>
 

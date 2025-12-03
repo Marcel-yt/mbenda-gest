@@ -6,10 +6,11 @@
 @section('content')
 @php
   use App\Models\User;
+  use App\Models\Client;
   $totalUsers = User::count();
   $totalAdmins = User::where('role','admin')->count();
   $totalAgents = User::where('role','agent')->count();
-  $totalClients = User::where('role','client')->count();
+  $totalClients = Client::count();
 @endphp
 
 <div class="space-y-6">

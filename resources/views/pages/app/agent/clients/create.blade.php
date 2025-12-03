@@ -78,7 +78,7 @@
 
           <div>
             <label class="text-xs font-medium text-gray-700 mb-2 block">Indicatif</label>
-            <input name="indicatif" value="{{ old('indicatif', '+237') }}" class="mb-input" placeholder="+237" />
+              <input name="indicatif" value="{{ old('indicatif', '+241') }}" class="mb-input" placeholder="+241" />
           </div>
 
           <div>
@@ -87,7 +87,7 @@
           </div>
 
           <div class="md:col-span-2">
-            <label class="text-xs font-medium text-gray-700 mb-2 block">Adresse <span class="text-red-500">*</span></label>
+            <label class="text-xs font-medium text-gray-700 mb-2 block">Adresse</label>
             <input name="address" value="{{ old('address') }}" class="mb-input" placeholder="Entrez l'adresse complète" />
           </div>
 
@@ -139,7 +139,8 @@
       </div>
     </div>
 
-    {{-- Photo Upload --}}
+    {{-- Photo Upload (désactivée) --}}
+    {{--
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div class="px-6 py-4" style="background: var(--mb-secondary);">
         <h2 class="text-lg font-semibold text-white">Photo de profil</h2>
@@ -152,6 +153,7 @@
         </div>
       </div>
     </div>
+    --}}
 
     {{-- Action Buttons --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">

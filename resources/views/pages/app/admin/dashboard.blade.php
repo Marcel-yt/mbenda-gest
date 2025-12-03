@@ -293,6 +293,35 @@
     </div>
   </div>
 
+  {{-- Table: commissions par agent --}}
+  <div class="bg-white border rounded-xl p-6 shadow-sm">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-base font-bold text-gray-800">Commissions par agent</h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wide">
+          <tr>
+            <th class="px-4 py-2 text-left">Agent</th>
+            <th class="px-4 py-2 text-right">Commissions prévues</th>
+            <th class="px-4 py-2 text-right">Commissions réelles</th>
+            <th class="px-4 py-2 text-right">Différence</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          @foreach(($agentCommissions ?? []) as $ag)
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-3">{{ $ag['name'] }} <div class="text-xs text-gray-400">{{ $ag['email'] ?? '' }}</div></td>
+              <td class="px-4 py-3 text-right font-medium text-amber-600">{{ number_format($ag['planned'] ?? 0,2) }} XAF</td>
+              <td class="px-4 py-3 text-right font-medium text-purple-600">{{ number_format($ag['real'] ?? 0,2) }} XAF</td>
+              <td class="px-4 py-3 text-right">{{ number_format((($ag['planned'] ?? 0) - ($ag['real'] ?? 0)),2) }} XAF</td>
+            </tr>
+          @endforeach
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 @endsection
 

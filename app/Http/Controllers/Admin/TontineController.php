@@ -21,6 +21,7 @@ class TontineController extends Controller
 
         $query = \App\Models\Tontine::with(['client','creator'])->orderByDesc('id');
 
+        // Apply search filter (client name/phone or code)
         if ($q !== '') {
             $query->where(function ($s) use ($q) {
                 $s->whereHas('client', function ($c) use ($q) {
@@ -35,23 +36,35 @@ class TontineController extends Controller
             });
         }
 
+        // Save a base query that includes search/date filters but not the status filter
+        $baseQuery = clone $query;
+
+        // Date filters
+        $from = $to = null;
+        try { if ($created_from) $from = \Carbon\Carbon::createFromFormat('Y-m-d',$created_from)->startOfDay(); } catch (\Throwable $e) { $created_from=''; }
+        try { if ($created_to)   $to   = \Carbon\Carbon::createFromFormat('Y-m-d',$created_to)->endOfDay();   } catch (\Throwable $e) { $created_to=''; }
+
+        if ($from && $to)        $baseQuery->whereBetween('created_at',[$from,$to]);
+        elseif ($from)           $baseQuery->where('created_at','>=',$from);
+        elseif ($to)             $baseQuery->where('created_at','<=',$to);
+
+        // Compute totals (respecting search & date filters but NOT pagination)
+        $totalCount = (clone $baseQuery)->count();
+        $activeCount = (clone $baseQuery)->where('status','active')->count();
+        $completedCount = (clone $baseQuery)->where('status','completed')->count();
+        $draftCount = (clone $baseQuery)->where('status','draft')->count();
+        $paidCount = (clone $baseQuery)->where('status','paid')->count();
+        $cancelledCount = (clone $baseQuery)->where('status','cancelled')->count();
+
+        // Now apply status filter (if provided) to the main query used for pagination
         if ($status !== '' && in_array($status,$allowed,true)) {
             $query->where('status',$status);
         } else {
             $status = '';
         }
-
-        $from = $to = null;
-        try { if ($created_from) $from = \Carbon\Carbon::createFromFormat('Y-m-d',$created_from)->startOfDay(); } catch (\Throwable $e) { $created_from=''; }
-        try { if ($created_to)   $to   = \Carbon\Carbon::createFromFormat('Y-m-d',$created_to)->endOfDay();   } catch (\Throwable $e) { $created_to=''; }
-
-        if ($from && $to)        $query->whereBetween('created_at',[$from,$to]);
-        elseif ($from)           $query->where('created_at','>=',$from);
-        elseif ($to)             $query->where('created_at','<=',$to);
-
         $tontines = $query->paginate(20)->appends($request->query());
 
-        return view('pages.app.admin.tontines.index', compact('tontines','q','status','created_from','created_to'));
+        return view('pages.app.admin.tontines.index', compact('tontines','q','status','created_from','created_to', 'totalCount','activeCount','completedCount','draftCount', 'paidCount', 'cancelledCount'));
     }
 
     public function show(int $id)

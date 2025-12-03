@@ -4,6 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Connexion — {{ config('app.name', 'Mbenda Gest') }}</title>
+    <meta name="description" content="Connexion au tableau de bord Mbenda Gest — accès réservé au personnel. Contactez le support si vous rencontrez un problème de connexion.">
+    <meta property="og:site_name" content="{{ config('app.name') }}">
+    <meta property="og:title" content="Connexion — {{ config('app.name') }}">
+    <meta property="og:description" content="Connexion au tableau de bord Mbenda Gest — accès réservé au personnel. Contactez le support si vous rencontrez un problème de connexion.">
+    <meta property="og:image" content="{{ asset('icon-192x192.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('icon-192x192.png') }}">
+    <link rel="canonical" href="{{ url()->current() }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
