@@ -87,8 +87,8 @@
           </div>
 
           <div class="md:col-span-2">
-            <label class="text-xs font-medium text-gray-700 mb-2 block">Adresse</label>
-            <input name="address" value="{{ old('address') }}" class="mb-input" placeholder="Entrez l'adresse complète" />
+            <label class="text-xs font-medium text-gray-700 mb-2 block">Adresse <span class="text-red-500">*</span></label>
+            <input name="address" value="{{ old('address') }}" required class="mb-input" placeholder="Entrez l'adresse complète" />
           </div>
 
           <div class="md:col-span-2">
