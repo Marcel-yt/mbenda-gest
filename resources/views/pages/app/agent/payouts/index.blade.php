@@ -306,6 +306,12 @@ document.addEventListener('DOMContentLoaded', function () {
   const qc = form.querySelector('input[name="q_client"]');
   if (qc) {
     qc.setAttribute('autocomplete','off');
+    // Auto-focus si une recherche est active (après rechargement de page)
+    if (qc.value.trim()) {
+      qc.focus();
+      const len = qc.value.length;
+      qc.setSelectionRange(len, len);
+    }
     let timeout;
     qc.addEventListener('input', () => {
       clearTimeout(timeout);

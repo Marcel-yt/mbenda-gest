@@ -339,6 +339,12 @@ document.addEventListener('DOMContentLoaded', function () {
   const qc = form.querySelector('input[name="q_client"]');
   if (qc) {
     qc.setAttribute('autocomplete','off');
+    // Auto-focus si une recherche est active (après rechargement de page)
+    if (qc.value.trim()) {
+      qc.focus();
+      const len = qc.value.length;
+      qc.setSelectionRange(len, len);
+    }
     let timeoutClient;
     qc.addEventListener('input', () => {
       clearTimeout(timeoutClient);
@@ -365,6 +371,15 @@ document.addEventListener('DOMContentLoaded', function () {
   const qa = form.querySelector('input[name="q_agent"]');
   if (qa) {
     qa.setAttribute('autocomplete','off');
+    // Auto-focus si une recherche est active (après rechargement de page)
+    if (qa.value.trim()) {
+      // Ne pas voler le focus si q_client est déjà actif
+      if (!qc || !qc.value.trim()) {
+        qa.focus();
+        const lenA = qa.value.length;
+        qa.setSelectionRange(lenA, lenA);
+      }
+    }
     let timeoutAgent;
     qa.addEventListener('input', () => {
       clearTimeout(timeoutAgent);
