@@ -33,18 +33,17 @@ class Tontine extends Model
     ];
 
     protected $casts = [
-        'settings' => 'array',
-        'allow_early_payout' => 'boolean',
-        'daily_amount' => 'decimal:2',
-        'collected_total' => 'decimal:2',
-        'start_date' => 'date',
+        'settings'          => 'array',
+        'allow_early_payout'=> 'boolean',
+        'daily_amount'      => 'decimal:2',
+        'collected_total'   => 'decimal:2',
+        'start_date'        => 'date',
         'expected_end_date' => 'date',
-        'actual_end_date' => 'date',
-        'cancelled_at' => 'datetime',
-        // ajoute si les colonnes existent en DB:
-        // 'completed_at' => 'datetime',
-        // 'paid_at' => 'datetime',
-        // 'archived_at' => 'datetime',
+        'actual_end_date'   => 'date',
+        'cancelled_at'      => 'datetime',
+        'completed_at'      => 'datetime',
+        'paid_at'           => 'datetime',
+        'archived_at'       => 'datetime',
     ];
 
     
@@ -66,22 +65,15 @@ class Tontine extends Model
         return $this->belongsTo(\App\Models\User::class, 'cancelled_by');
     }
 
-    /*
-     * Relations for collectes and payouts are commented out for now
-     * to avoid "Class not found" errors until those models/tables exist.
-     *
-     * Uncomment or implement these when Collecte and TontinePayout models are added.
-     *
-     * public function collectes()
-     * {
-     *     return $this->hasMany(\App\Models\Collecte::class);
-     * }
-     *
-     * public function payouts()
-     * {
-     *     return $this->hasMany(\App\Models\TontinePayout::class);
-     * }
-     */
+    public function collectes()
+    {
+        return $this->hasMany(\App\Models\Collecte::class);
+    }
+
+    public function payouts()
+    {
+        return $this->hasMany(\App\Models\Payout::class);
+    }
 
     protected static function booted()
     {

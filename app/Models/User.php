@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles; // ajouté
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, SoftDeletes, HasRoles; // ajouté HasRoles
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles; // ajouté HasRoles
 
     protected $fillable = [
         'first_name',
